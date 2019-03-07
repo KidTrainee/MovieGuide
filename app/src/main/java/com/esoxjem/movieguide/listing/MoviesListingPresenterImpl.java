@@ -21,7 +21,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     private MoviesListingInteractor moviesInteractor;
     private Disposable fetchSubscription;
     private Disposable movieSearchSubscription;
-    private int currentPage = 1;
+    private int currentPage = 1000;
     private List<Movie> loadedMovies = new ArrayList<>();
     private boolean showingSearchResult = false;
 
@@ -32,10 +32,6 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     @Override
     public void setView(MoviesListingView view) {
         this.view = view;
-        if(!showingSearchResult){
-            displayMovies();
-        }
-
     }
 
     @Override
@@ -69,7 +65,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     @Override
     public void firstPage() {
-        currentPage = 1;
+        currentPage = 1000;
         loadedMovies.clear();
         displayMovies();
     }

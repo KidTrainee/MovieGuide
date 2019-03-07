@@ -137,4 +137,17 @@ public class Movie implements Parcelable
         parcel.writeString(title);
         parcel.writeDouble(voteAverage);
     }
+
+    @Override
+    public String toString() {
+        return "Movie{" +
+                "id='" + id + '\'' +
+                ", overview='" + overview + '\'' +
+                ", releaseDate='" + releaseDate + '\'' +
+                ", posterPath='" + posterPath + '\'' +
+                ", backdropPath='" + backdropPath + '\'' +
+                ", title='" + title + '\'' +
+                ", voteAverage=" + voteAverage +
+                '}';
+    }
 }

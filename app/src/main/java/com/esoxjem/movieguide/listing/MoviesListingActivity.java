@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.Constants;
+import com.esoxjem.movieguide.common.LogcatActivity;
 import com.esoxjem.movieguide.details.MovieDetailsActivity;
 import com.esoxjem.movieguide.details.MovieDetailsFragment;
 import com.esoxjem.movieguide.Movie;
@@ -24,7 +25,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.disposables.Disposable;
 
 
-public class MoviesListingActivity extends AppCompatActivity implements MoviesListingFragment.Callback {
+public class MoviesListingActivity extends LogcatActivity implements MoviesListingFragment.Callback {
     public static final String DETAILS_FRAGMENT = "DetailsFragment";
     private boolean twoPaneMode;
     private Disposable searchViewTextSubscription;
@@ -34,6 +35,12 @@ public class MoviesListingActivity extends AppCompatActivity implements MoviesLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         setToolbar();
+
+        if (savedInstanceState==null) {
+            getSupportFragmentManager().beginTransaction()
+                    .replace(R.id.fragment_listing_container, new MoviesListingFragment())
+                    .commit();
+        }
 
         if (findViewById(R.id.movie_details_container) != null) {
             twoPaneMode = true;
@@ -63,7 +70,7 @@ public class MoviesListingActivity extends AppCompatActivity implements MoviesLi
         getMenuInflater().inflate(R.menu.menu_main, menu);
         final MenuItem searchItem = menu.findItem(R.id.action_search);
         final SearchView searchView = (SearchView) searchItem.getActionView();
-        final MoviesListingFragment mlFragment = (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
+
         searchItem.setOnActionExpandListener(new MenuItem.OnActionExpandListener() {
             @Override
             public boolean onMenuItemActionExpand(MenuItem item) {
@@ -72,8 +79,8 @@ public class MoviesListingActivity extends AppCompatActivity implements MoviesLi
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                MoviesListingFragment mlFragment = (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
-                mlFragment.searchViewBackButtonClicked();
+                MoviesListingFragment mMlFragment = (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
+                mMlFragment.searchViewBackButtonClicked();
                 return true;
             }
         });
@@ -82,7 +89,9 @@ public class MoviesListingActivity extends AppCompatActivity implements MoviesLi
                 .debounce(500, TimeUnit.MILLISECONDS)
                 .subscribe(charSequence -> {
                     if (charSequence.length() > 0) {
-                        mlFragment.searchViewClicked(charSequence.toString());
+                        MoviesListingFragment mMlFragment =
+                                (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
+                        mMlFragment.searchViewClicked(charSequence.toString());
                     }
                 });
 
