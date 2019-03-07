@@ -8,6 +8,7 @@ import java.util.List;
  * @author arun
  */
 public interface MoviesListingPresenter
+        extends MoviesListingView.Listener, MoviesListingInteractor.Listener
 {
     void setView(MoviesListingView view);
 

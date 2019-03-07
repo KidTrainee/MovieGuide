@@ -7,23 +7,18 @@ import android.support.annotation.NonNull;
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.util.EspressoIdlingResource;
-import com.esoxjem.movieguide.util.RxUtils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.schedulers.Schedulers;
-
 /**
  * @author arun
  */
-class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListingView.Listener {
+class MoviesListingPresenterImpl implements MoviesListingPresenter {
+
     private MoviesListingView mView;
     private MoviesListingInteractor moviesInteractor;
-    private Disposable fetchSubscription;
-    private Disposable movieSearchSubscription;
+
     private int mCurrentPage = 1;
 
     private boolean showingSearchResult = false;
@@ -44,7 +39,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
     public void destroy() {
         mView.unregisterListener(this);
         mView = null;
-        RxUtils.unsubscribe(fetchSubscription, movieSearchSubscription);
+        moviesInteractor.unregister();
     }
 
     @Override
@@ -57,34 +52,23 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
         return mMovies.get(0);
     }
 
-    private void fetchMovies() {
+    private void fetchMoviesCurrentPage() {
         EspressoIdlingResource.increment();
         showLoading();
-        fetchSubscription = moviesInteractor.fetchMovies(mCurrentPage)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .doFinally(() -> {
-                    if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
-                        EspressoIdlingResource.decrement(); // Set app as idle.
-                    }
-                })
-                .subscribe(this::onMovieFetchSuccess, this::onMovieFetchFailed);
+        moviesInteractor.fetchMovies(mCurrentPage, this);
     }
 
     private void fetchMovieSearchResult(@NonNull final String searchText) {
         showingSearchResult = true;
         showLoading();
-        movieSearchSubscription = moviesInteractor.searchMovie(searchText)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onMovieSearchSuccess, this::onMovieSearchFailed);
+        moviesInteractor.searchMovie(searchText, this);
     }
 
     @Override
     public void fetchFirstPage() {
         mCurrentPage = 1;
         mMovies.clear();
-        fetchMovies();
+        fetchMoviesCurrentPage();
     }
 
     @Override
@@ -93,14 +77,14 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
             return;
         if (moviesInteractor.isPaginationSupported()) {
             mCurrentPage++;
-            fetchMovies();
+            fetchMoviesCurrentPage();
         }
     }
 
     @Override
     public void searchMovie(final String searchText) {
         if(searchText == null || searchText.length() < 1) {
-            fetchMovies();
+            fetchMoviesCurrentPage();
         } else {
             fetchMovieSearchResult(searchText);
         }
@@ -111,7 +95,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
         if(showingSearchResult) {
             showingSearchResult = false;
             mMovies.clear();
-            fetchMovies();
+            fetchMoviesCurrentPage();
         }
     }
 
@@ -128,7 +112,8 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
     // endregion
 
     // region InteractorListener methods
-    private void onMovieFetchSuccess(List<Movie> movies) {
+    @Override
+    public void onMovieFetchSuccess(List<Movie> movies) {
         if (moviesInteractor.isPaginationSupported()) {
             mMovies.addAll(movies);
         } else {
@@ -140,11 +125,13 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
         }
     }
 
-    private void onMovieFetchFailed(Throwable e) {
+    @Override
+    public void onMovieFetchFailed(Throwable e) {
         mView.loadingFailed(e.getMessage());
     }
 
-    private void onMovieSearchSuccess(List<Movie> movies) {
+    @Override
+    public void onMovieSearchSuccess(List<Movie> movies) {
         if (isViewAttached()) {
             mMovies.clear();
             mMovies.addAll(movies);
@@ -152,7 +139,8 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListin
         }
     }
 
-    private void onMovieSearchFailed(Throwable e) {
+    @Override
+    public void onMovieSearchFailed(Throwable e) {
         mView.loadingFailed(e.getMessage());
     }
     // endregion

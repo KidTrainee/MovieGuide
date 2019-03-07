@@ -1,12 +1,15 @@
 package com.esoxjem.movieguide.listing;
 
 import android.support.annotation.NonNull;
+
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.MoviesWraper;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.listing.sorting.SortType;
 import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
+import com.esoxjem.movieguide.util.EspressoIdlingResource;
+import com.esoxjem.movieguide.util.RxUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -14,6 +17,9 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author arun
@@ -25,6 +31,9 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static final int NEWEST_MIN_VOTE_COUNT = 50;
 
+    private Disposable movieSearchSubscription;
+    private Disposable fetchSubscription;
+
     MoviesListingInteractorImpl(FavoritesInteractor favoritesInteractor,
                                 TmdbWebService tmdbWebService, SortingOptionStore store) {
         this.favoritesInteractor = favoritesInteractor;
@@ -32,6 +41,10 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
         sortingOptionStore = store;
     }
 
+    @Override
+    public void unregister() {
+        RxUtils.unsubscribe(fetchSubscription, movieSearchSubscription);
+    }
 
     @Override
     public boolean isPaginationSupported() {
@@ -60,4 +73,23 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
         return tmdbWebService.searchMovies(searchQuery).map(MoviesWraper::getMovieList);
     }
 
+    @Override
+    public void searchMovie(String searchText, Listener listener) {
+        movieSearchSubscription = searchMovie(searchText).subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(listener::onMovieSearchSuccess, listener::onMovieSearchFailed);
+    }
+
+    @Override
+    public void fetchMovies(int page, Listener listener) {
+        fetchSubscription = fetchMovies(page)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
+                        EspressoIdlingResource.decrement(); // Set app as idle.
+                    }
+                })
+                .subscribe(listener::onMovieFetchSuccess, listener::onMovieFetchFailed);
+    }
 }
