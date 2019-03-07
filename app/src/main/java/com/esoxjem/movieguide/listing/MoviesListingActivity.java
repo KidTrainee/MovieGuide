@@ -14,6 +14,7 @@ import android.view.MenuItem;
 
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.Constants;
+import com.esoxjem.movieguide.common.BaseActivity;
 import com.esoxjem.movieguide.common.LogcatActivity;
 import com.esoxjem.movieguide.details.MovieDetailsActivity;
 import com.esoxjem.movieguide.details.MovieDetailsFragment;
@@ -25,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 import io.reactivex.disposables.Disposable;
 
 
-public class MoviesListingActivity extends LogcatActivity implements MoviesListingFragment.Callback {
+public class MoviesListingActivity extends BaseActivity implements MoviesListingFragment.Callback {
     public static final String DETAILS_FRAGMENT = "DetailsFragment";
     private boolean twoPaneMode;
     private Disposable searchViewTextSubscription;
@@ -79,7 +80,7 @@ public class MoviesListingActivity extends LogcatActivity implements MoviesListi
 
             @Override
             public boolean onMenuItemActionCollapse(MenuItem item) {
-                MoviesListingFragment mMlFragment = (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
+                MoviesListingFragment mMlFragment = (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing_container);
                 mMlFragment.searchViewBackButtonClicked();
                 return true;
             }
@@ -90,7 +91,7 @@ public class MoviesListingActivity extends LogcatActivity implements MoviesListi
                 .subscribe(charSequence -> {
                     if (charSequence.length() > 0) {
                         MoviesListingFragment mMlFragment =
-                                (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing);
+                                (MoviesListingFragment) getSupportFragmentManager().findFragmentById(R.id.fragment_listing_container);
                         mMlFragment.searchViewClicked(charSequence.toString());
                     }
                 });

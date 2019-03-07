@@ -24,7 +24,6 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.esoxjem.movieguide.Api;
-import com.esoxjem.movieguide.BaseApplication;
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
@@ -33,16 +32,13 @@ import com.esoxjem.movieguide.Video;
 
 import java.util.List;
 
-import javax.inject.Inject;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class MovieDetailsFragment extends Fragment implements MovieDetailsView, View.OnClickListener
+public class MovieDetailsFragment extends BaseMovieDetailsFragment implements MovieDetailsView, View.OnClickListener
 {
-    @Inject
     MovieDetailsPresenter movieDetailsPresenter;
 
     @BindView(R.id.movie_poster)
@@ -94,7 +90,7 @@ public class MovieDetailsFragment extends Fragment implements MovieDetailsView, 
     {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        ((BaseApplication) getActivity().getApplication()).createDetailsComponent().inject(this);
+        movieDetailsPresenter = getModule().getMovieDetailsPresenter();
     }
 
     @Override
@@ -293,6 +289,5 @@ public class MovieDetailsFragment extends Fragment implements MovieDetailsView, 
     public void onDestroy()
     {
         super.onDestroy();
-        ((BaseApplication) getActivity().getApplication()).releaseDetailsComponent();
     }
 }

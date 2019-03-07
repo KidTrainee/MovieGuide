@@ -4,17 +4,18 @@ import android.app.Application;
 import android.content.Context;
 import android.content.res.Resources;
 
-import javax.inject.Singleton;
+import com.esoxjem.movieguide.favorites.FavoritesInteractor;
+import com.esoxjem.movieguide.favorites.FavoritesModule;
+import com.esoxjem.movieguide.favorites.FavoritesStore;
+import com.esoxjem.movieguide.network.NetworkModule;
+import com.esoxjem.movieguide.network.TmdbWebService;
 
-import dagger.Module;
-import dagger.Provides;
 import io.realm.Realm;
 
 /**
  * @author arunsasidharan
  * @author pulkitkumar
  */
-@Module
 public class AppModule
 {
     private Context context;
@@ -24,24 +25,29 @@ public class AppModule
         context = application;
     }
 
-    @Provides
-    @Singleton
-    public Context provideContext()
+    public Context getContext()
     {
         return context;
     }
 
-    @Provides
-    @Singleton
-    public Resources provideResources(Context context)
-    {
-        return context.getResources();
-    }
-
-    @Provides
-    @Singleton
-    public Realm provideRealm()
+    public Realm getRealm()
     {
         return Realm.getDefaultInstance();
+    }
+
+    public TmdbWebService getTmdbWebService() {
+        return getNetworkModule().getTmdbWebService();
+    }
+
+    private NetworkModule getNetworkModule() {
+        return new NetworkModule();
+    }
+
+    public FavoritesStore getFavoritesStore() {
+        return new FavoritesStore(getRealm());
+    }
+
+    public FavoritesInteractor getFavoritesInteractor() {
+        return new FavoritesModule(this).getFavouritesInteractor();
     }
 }

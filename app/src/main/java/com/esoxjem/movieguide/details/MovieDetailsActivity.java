@@ -8,8 +8,9 @@ import android.view.MenuItem;
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
+import com.esoxjem.movieguide.common.BaseActivity;
 
-public class MovieDetailsActivity extends AppCompatActivity
+public class MovieDetailsActivity extends BaseActivity
 {
     @Override
     protected void onCreate(Bundle savedInstanceState)

@@ -5,10 +5,6 @@ import com.esoxjem.movieguide.BuildConfig;
 
 import java.util.concurrent.TimeUnit;
 
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -20,22 +16,17 @@ import retrofit2.converter.moshi.MoshiConverterFactory;
  * @author arunsasidharan
  * @author pulkitkumar
  */
-@Module
 public class NetworkModule {
+
     public static final int CONNECT_TIMEOUT_IN_MS = 30000;
 
-    @Provides
-    @Singleton
-    Interceptor requestInterceptor(RequestInterceptor interceptor) {
-        return interceptor;
+    public NetworkModule() {
     }
 
-    @Provides
-    @Singleton
-    OkHttpClient provideOkHttpClient(RequestInterceptor requestInterceptor) {
+    OkHttpClient getOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(CONNECT_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS)
-                .addInterceptor(requestInterceptor);
+                .addInterceptor(getRequestInterceptor());
 
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor loggingInterceptor = new HttpLoggingInterceptor();
@@ -46,22 +37,22 @@ public class NetworkModule {
         return builder.build();
     }
 
-    @Singleton
-    @Provides
-    Retrofit retrofit(OkHttpClient okHttpClient) {
+    private Interceptor getRequestInterceptor() {
+        return new RequestInterceptor();
+    }
+
+    Retrofit getRetrofit() {
         return new Retrofit
                 .Builder()
                 .baseUrl(BuildConfig.TMDB_BASE_URL)
                 .addConverterFactory(MoshiConverterFactory.create())
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-                .client(okHttpClient)
+                .client(getOkHttpClient())
                 .build();
     }
 
-    @Singleton
-    @Provides
-    TmdbWebService tmdbWebService(Retrofit retrofit) {
-        return retrofit.create(TmdbWebService.class);
+    public TmdbWebService getTmdbWebService() {
+        return getRetrofit().create(TmdbWebService.class);
     }
 
 }

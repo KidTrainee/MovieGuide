@@ -5,9 +5,9 @@ package com.esoxjem.movieguide.listing;
  */
 public interface MoviesListingPresenter
 {
-    void firstPage();
+    void fetchFirstPage();
 
-    void nextPage();
+    void fetchNextPage();
 
     void setView(MoviesListingView view);
 

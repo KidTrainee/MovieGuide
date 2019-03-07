@@ -2,21 +2,19 @@ package com.esoxjem.movieguide.favorites;
 
 import com.esoxjem.movieguide.AppModule;
 
-import javax.inject.Singleton;
-
-import dagger.Module;
-import dagger.Provides;
-
 /**
  * @author pulkitkumar
  */
-@Module(includes = AppModule.class)
 public class FavoritesModule
 {
-    @Provides
-    @Singleton
-    FavoritesInteractor provideFavouritesInteractor(FavoritesStore store)
+    private final AppModule mAppModule;
+
+    public FavoritesModule(AppModule appModule) {
+        mAppModule = appModule;
+    }
+
+    public FavoritesInteractor getFavouritesInteractor()
     {
-        return new FavoritesInteractorImpl(store);
+        return new FavoritesInteractorImpl(mAppModule.getFavoritesStore());
     }
 }

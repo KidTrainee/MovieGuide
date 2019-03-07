@@ -1,24 +1,42 @@
 package com.esoxjem.movieguide.listing.sorting;
 
-import dagger.Module;
-import dagger.Provides;
+import android.content.Context;
+import android.support.v7.app.AppCompatActivity;
+
+import com.esoxjem.movieguide.AppModule;
 
 /**
  * @author pulkitkumar
  * @author arunsasidharan
  */
-@Module
 public class SortingModule
 {
-    @Provides
-    SortingDialogInteractor providesSortingDialogInteractor(SortingOptionStore store)
-    {
-        return new SortingDialogInteractorImpl(store);
+
+    public SortingModule(AppCompatActivity activity) {
+        mActivity = activity;
     }
 
-    @Provides
-    SortingDialogPresenter providePresenter(SortingDialogInteractor interactor)
+    private final AppCompatActivity mActivity;
+
+    private Context getContext() {
+        return mActivity;
+    }
+
+    SortingDialogInteractor providesSortingDialogInteractor()
     {
-        return new SortingDialogPresenterImpl(interactor);
+        return new SortingDialogInteractorImpl(getSortingOptionStore());
+    }
+
+    private SortingOptionStore getSortingOptionStore() {
+        return new SortingOptionStore(getContext());
+    }
+
+    SortingDialogPresenter getSortingDialogPresenter()
+    {
+        return new SortingDialogPresenterImpl(getSortingDialogInteractor());
+    }
+
+    private SortingDialogInteractor getSortingDialogInteractor() {
+        return new SortingDialogInteractorImpl(getSortingOptionStore());
     }
 }

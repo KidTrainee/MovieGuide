@@ -17,13 +17,13 @@ def getProperty(String filename, String propName) {
 }
 
 android {
-    compileSdkVersion 26
-    buildToolsVersion '26.0.2'
+    compileSdkVersion 27
+    buildToolsVersion '27.0.2'
 
     defaultConfig {
         applicationId "com.esoxjem.movieguide"
         minSdkVersion 16
-        targetSdkVersion 26
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
 
@@ -90,10 +90,10 @@ dependencies {
     implementation 'com.jakewharton:butterknife:8.8.1'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.8.1'
 
-    // Dependency Injection
-    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
-    implementation "com.google.dagger:dagger:${daggerVersion}"
-    compileOnly 'javax.annotation:jsr250-api:1.0'
+//    // Dependency Injection
+//    annotationProcessor "com.google.dagger:dagger-compiler:${daggerVersion}"
+//    implementation "com.google.dagger:dagger:${daggerVersion}"
+//    compileOnly 'javax.annotation:jsr250-api:1.0'
 
     // Retrofit 2
     implementation 'com.squareup.retrofit2:retrofit:2.3.0'

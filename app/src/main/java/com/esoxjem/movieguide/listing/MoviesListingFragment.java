@@ -15,26 +15,22 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.esoxjem.movieguide.BaseApplication;
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
-import com.esoxjem.movieguide.common.BaseObservableFragment;
 import com.esoxjem.movieguide.listing.sorting.SortingDialogFragment;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
 
 public class MoviesListingFragment
-        extends BaseObservableFragment<MoviesListingView.Listener>
+        extends BaseMoviesListingFragment<MoviesListingView.Listener>
         implements MoviesListingView {
-    @Inject
+
     MoviesListingPresenter moviesPresenter;
 
     @BindView(R.id.movies_listing)
@@ -63,8 +59,7 @@ public class MoviesListingFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        ((BaseApplication) getActivity().getApplication()).createListingComponent().inject(this);
-        moviesPresenter.setView(this);
+        moviesPresenter = getModule().getMoviesListingPresenter();
     }
 
     private LoadMoreOnScrollListener mLoadMoreOnScrollListener;
@@ -78,7 +73,7 @@ public class MoviesListingFragment
         mLoadMoreOnScrollListener = new LoadMoreOnScrollListener() {
             @Override
             public void loadMore() {
-                moviesPresenter.nextPage();
+                moviesPresenter.fetchNextPage();
             }
         };
         moviesListingRC.addOnScrollListener(mLoadMoreOnScrollListener);
@@ -89,6 +84,7 @@ public class MoviesListingFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+        moviesPresenter.setView(this);
         if (savedInstanceState != null) {
             this.movies.addAll(savedInstanceState.getParcelableArrayList(Constants.MOVIE));
             if (!movies.isEmpty()) {
@@ -170,12 +166,6 @@ public class MoviesListingFragment
     public void onDetach() {
         callback = null;
         super.onDetach();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        ((BaseApplication) getActivity().getApplication()).releaseListingComponent();
     }
 
     @Override

@@ -64,14 +64,14 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     }
 
     @Override
-    public void firstPage() {
+    public void fetchFirstPage() {
         currentPage = 1000;
         loadedMovies.clear();
         displayMovies();
     }
 
     @Override
-    public void nextPage() {
+    public void fetchNextPage() {
         if(showingSearchResult)
             return;
         if (moviesInteractor.isPaginationSupported()) {
@@ -87,7 +87,6 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         } else {
             displayMovieSearchResult(searchText);
         }
-
     }
 
     @Override

@@ -2,13 +2,8 @@ package com.esoxjem.movieguide.favorites;
 
 import com.esoxjem.movieguide.Movie;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
-import javax.inject.Inject;
-
-import javax.inject.Singleton;
 
 import io.realm.Realm;
 import io.realm.RealmResults;
@@ -16,12 +11,10 @@ import io.realm.RealmResults;
 /**
  * @author arun
  */
-@Singleton
 public class FavoritesStore
 {
     private Realm realm;
 
-    @Inject
     public FavoritesStore(Realm realm)
     {
         this.realm = realm;

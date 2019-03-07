@@ -1,27 +1,25 @@
 package com.esoxjem.movieguide.details;
 
-import com.esoxjem.movieguide.favorites.FavoritesInteractor;
-import com.esoxjem.movieguide.network.TmdbWebService;
-
-import dagger.Module;
-import dagger.Provides;
+import com.esoxjem.movieguide.AppModule;
 
 /**
  * @author pulkitkumar
  * @author arunsasidharan
  */
-@Module
 public class DetailsModule {
-    @Provides
-    @DetailsScope
-    MovieDetailsInteractor provideInteractor(TmdbWebService tmdbWebService) {
-        return new MovieDetailsInteractorImpl(tmdbWebService);
+
+    private final AppModule mAppModule;
+
+    public DetailsModule(AppModule appModule) {
+        mAppModule = appModule;
     }
 
-    @Provides
-    @DetailsScope
-    MovieDetailsPresenter providePresenter(MovieDetailsInteractor detailsInteractor,
-                                           FavoritesInteractor favoritesInteractor) {
-        return new MovieDetailsPresenterImpl(detailsInteractor, favoritesInteractor);
+    private MovieDetailsInteractor getDetailsInteractor() {
+        return new MovieDetailsInteractorImpl(mAppModule.getTmdbWebService());
+    }
+
+
+    public MovieDetailsPresenter getMovieDetailsPresenter() {
+        return new MovieDetailsPresenterImpl(getDetailsInteractor(), mAppModule.getFavoritesInteractor());
     }
 }

@@ -5,17 +5,13 @@ import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
-import com.esoxjem.movieguide.BaseApplication;
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.listing.MoviesListingPresenter;
-
-import javax.inject.Inject;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -24,9 +20,8 @@ import butterknife.Unbinder;
 /**
  * @author arun
  */
-public class SortingDialogFragment extends DialogFragment implements SortingDialogView, RadioGroup.OnCheckedChangeListener
+public class SortingDialogFragment extends BaseSortingDialogFragment implements SortingDialogView, RadioGroup.OnCheckedChangeListener
 {
-    @Inject
     SortingDialogPresenter sortingDialogPresenter;
 
     @BindView(R.id.most_popular)
@@ -54,14 +49,15 @@ public class SortingDialogFragment extends DialogFragment implements SortingDial
     {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
-        ((BaseApplication) getActivity().getApplication()).getListingComponent().inject(this);
-        sortingDialogPresenter.setView(this);
+        sortingDialogPresenter = getModule().getSortingDialogPresenter();
     }
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
+        sortingDialogPresenter.setView(this);
+
         LayoutInflater inflater = (LayoutInflater) getActivity().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         View dialogView = inflater.inflate(R.layout.sorting_options, null);
         unbinder = ButterKnife.bind(this, dialogView);
@@ -112,21 +108,21 @@ public class SortingDialogFragment extends DialogFragment implements SortingDial
         {
             case R.id.most_popular:
                 sortingDialogPresenter.onPopularMoviesSelected();
-                moviesListingPresenter.firstPage();
+                moviesListingPresenter.fetchFirstPage();
                 break;
 
             case R.id.highest_rated:
                 sortingDialogPresenter.onHighestRatedMoviesSelected();
-                moviesListingPresenter.firstPage();
+                moviesListingPresenter.fetchFirstPage();
                 break;
 
             case R.id.favorites:
                 sortingDialogPresenter.onFavoritesSelected();
-                moviesListingPresenter.firstPage();
+                moviesListingPresenter.fetchFirstPage();
                 break;
             case R.id.newest:
                 sortingDialogPresenter.onNewestMoviesSelected();
-                moviesListingPresenter.firstPage();
+                moviesListingPresenter.fetchFirstPage();
                 break;
         }
     }
