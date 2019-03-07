@@ -1,7 +1,10 @@
 package com.esoxjem.movieguide.listing;
 
+import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
+import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.util.EspressoIdlingResource;
 import com.esoxjem.movieguide.util.RxUtils;
@@ -16,14 +19,16 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author arun
  */
-class MoviesListingPresenterImpl implements MoviesListingPresenter {
-    private MoviesListingView view;
+class MoviesListingPresenterImpl implements MoviesListingPresenter, MoviesListingView.Listener {
+    private MoviesListingView mView;
     private MoviesListingInteractor moviesInteractor;
     private Disposable fetchSubscription;
     private Disposable movieSearchSubscription;
-    private int currentPage = 1000;
-    private List<Movie> loadedMovies = new ArrayList<>();
+    private int mCurrentPage = 1;
+
     private boolean showingSearchResult = false;
+
+    private List<Movie> mMovies = new ArrayList<>();
 
     MoviesListingPresenterImpl(MoviesListingInteractor interactor) {
         moviesInteractor = interactor;
@@ -31,19 +36,31 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     @Override
     public void setView(MoviesListingView view) {
-        this.view = view;
+        mView = view;
+        mView.registerListener(this);
     }
 
     @Override
     public void destroy() {
-        view = null;
+        mView.unregisterListener(this);
+        mView = null;
         RxUtils.unsubscribe(fetchSubscription, movieSearchSubscription);
     }
 
-    private void displayMovies() {
+    @Override
+    public List<Movie> getCurrentData() {
+        return mMovies;
+    }
+
+    @Override
+    public Movie getFirstMovie() {
+        return mMovies.get(0);
+    }
+
+    private void fetchMovies() {
         EspressoIdlingResource.increment();
         showLoading();
-        fetchSubscription = moviesInteractor.fetchMovies(currentPage)
+        fetchSubscription = moviesInteractor.fetchMovies(mCurrentPage)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doFinally(() -> {
@@ -54,7 +71,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
                 .subscribe(this::onMovieFetchSuccess, this::onMovieFetchFailed);
     }
 
-    private void displayMovieSearchResult(@NonNull final String searchText) {
+    private void fetchMovieSearchResult(@NonNull final String searchText) {
         showingSearchResult = true;
         showLoading();
         movieSearchSubscription = moviesInteractor.searchMovie(searchText)
@@ -65,9 +82,9 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     @Override
     public void fetchFirstPage() {
-        currentPage = 1000;
-        loadedMovies.clear();
-        displayMovies();
+        mCurrentPage = 1;
+        mMovies.clear();
+        fetchMovies();
     }
 
     @Override
@@ -75,17 +92,17 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         if(showingSearchResult)
             return;
         if (moviesInteractor.isPaginationSupported()) {
-            currentPage++;
-            displayMovies();
+            mCurrentPage++;
+            fetchMovies();
         }
     }
 
     @Override
     public void searchMovie(final String searchText) {
         if(searchText == null || searchText.length() < 1) {
-            displayMovies();
+            fetchMovies();
         } else {
-            displayMovieSearchResult(searchText);
+            fetchMovieSearchResult(searchText);
         }
     }
 
@@ -93,45 +110,95 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     public void searchMovieBackPressed() {
         if(showingSearchResult) {
             showingSearchResult = false;
-            loadedMovies.clear();
-            displayMovies();
+            mMovies.clear();
+            fetchMovies();
         }
     }
 
     private void showLoading() {
         if (isViewAttached()) {
-            view.loadingStarted();
+            mView.loadingStarted();
         }
     }
 
+    // region Helper methods
+    private boolean isViewAttached() {
+        return mView != null;
+    }
+    // endregion
+
+    // region InteractorListener methods
     private void onMovieFetchSuccess(List<Movie> movies) {
         if (moviesInteractor.isPaginationSupported()) {
-            loadedMovies.addAll(movies);
+            mMovies.addAll(movies);
         } else {
-            loadedMovies = new ArrayList<>(movies);
+            mMovies.clear();
+            mMovies.addAll(movies);
         }
         if (isViewAttached()) {
-            view.showMovies(loadedMovies);
+            mView.showMovies();
         }
     }
 
     private void onMovieFetchFailed(Throwable e) {
-        view.loadingFailed(e.getMessage());
+        mView.loadingFailed(e.getMessage());
     }
 
     private void onMovieSearchSuccess(List<Movie> movies) {
-        loadedMovies.clear();
-        loadedMovies = new ArrayList<>(movies);
         if (isViewAttached()) {
-            view.showMovies(loadedMovies);
+            mMovies.clear();
+            mMovies.addAll(movies);
+            mView.showMovies();
         }
     }
 
     private void onMovieSearchFailed(Throwable e) {
-        view.loadingFailed(e.getMessage());
+        mView.loadingFailed(e.getMessage());
+    }
+    // endregion
+
+    // region ViewListener methods
+    @Override
+    public void searchViewClicked(String searchText) {
+        searchMovie(searchText);
     }
 
-    private boolean isViewAttached() {
-        return view != null;
+    @Override
+    public void searchViewBackButtonClicked() {
+        searchMovieBackPressed();
     }
+
+    @Override
+    public void onDestroyView() {
+        destroy();
+    }
+
+    @Override
+    public void onViewCreated(Bundle savedInstanceState) {
+        if (savedInstanceState != null) {
+            this.mMovies.addAll(savedInstanceState.getParcelableArrayList(Constants.MOVIE));
+            if (!mMovies.isEmpty()) {
+                mView.showMovies();
+                mView.showFirstMovie();
+            }
+        } else {
+            fetchFirstPage();
+        }
+    }
+
+    @Override
+    public void onActionSortSelected() {
+        fetchFirstPage();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putParcelableArrayList(Constants.MOVIE, (ArrayList<? extends Parcelable>) mMovies);
+    }
+
+    @Override
+    public void onLoadMore() {
+        fetchNextPage();
+    }
+    // endregion
 }

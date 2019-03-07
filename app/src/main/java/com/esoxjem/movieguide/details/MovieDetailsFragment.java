@@ -37,7 +37,8 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.Unbinder;
 
-public class MovieDetailsFragment extends BaseMovieDetailsFragment implements MovieDetailsView, View.OnClickListener
+public class MovieDetailsFragment extends BaseMovieDetailsFragment
+        implements MovieDetailsView, View.OnClickListener
 {
     MovieDetailsPresenter movieDetailsPresenter;
 

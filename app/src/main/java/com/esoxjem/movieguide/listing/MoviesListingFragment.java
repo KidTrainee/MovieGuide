@@ -40,7 +40,7 @@ public class MoviesListingFragment
     FrameLayout fragmentMoviesContainer;
 
     private RecyclerView.Adapter adapter;
-    private List<Movie> movies = new ArrayList<>();
+
     private Callback callback;
     private Unbinder unbinder;
 
@@ -73,7 +73,9 @@ public class MoviesListingFragment
         mLoadMoreOnScrollListener = new LoadMoreOnScrollListener() {
             @Override
             public void loadMore() {
-                moviesPresenter.fetchNextPage();
+                for (Listener listener : getListeners()) {
+                    listener.onLoadMore();
+                }
             }
         };
         moviesListingRC.addOnScrollListener(mLoadMoreOnScrollListener);
@@ -85,15 +87,8 @@ public class MoviesListingFragment
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         moviesPresenter.setView(this);
-        if (savedInstanceState != null) {
-            this.movies.addAll(savedInstanceState.getParcelableArrayList(Constants.MOVIE));
-            if (!movies.isEmpty()) {
-                moviesListingRC.setVisibility(View.VISIBLE);
-                adapter.notifyDataSetChanged();
-                callback.onMoviesLoaded(movies.get(0));
-            }
-        } else {
-            moviesPresenter.firstPage();
+        for (Listener listener : getListeners()) {
+            listener.onViewCreated(savedInstanceState);
         }
     }
 
@@ -101,7 +96,9 @@ public class MoviesListingFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sort:
-                moviesPresenter.firstPage();
+                for (Listener listener : getListeners()) {
+                    listener.onActionSortSelected();
+                }
                 displaySortingOptions();
         }
 
@@ -125,18 +122,20 @@ public class MoviesListingFragment
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
 
         moviesListingRC.setLayoutManager(layoutManager);
-        adapter = new MoviesListingAdapter(movies, this);
+        adapter = new MoviesListingAdapter(moviesPresenter.getCurrentData(), this);
         moviesListingRC.setAdapter(adapter);
     }
 
     @Override
-    public void showMovies(List<Movie> movies) {
+    public void showMovies() {
         mLoadMoreOnScrollListener.setIsLoading(false);
-        this.movies.clear();
-        this.movies.addAll(movies);
         moviesListingRC.setVisibility(View.VISIBLE);
         adapter.notifyDataSetChanged();
-        callback.onMoviesLoaded(movies.get(0));
+    }
+
+    @Override
+    public void showFirstMovie() {
+        callback.onMoviesLoaded(moviesPresenter.getFirstMovie());
     }
 
     @Override
@@ -158,7 +157,9 @@ public class MoviesListingFragment
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        moviesPresenter.destroy();
+        for (Listener listener : getListeners()) {
+            listener.onDestroyView();
+        }
         unbinder.unbind();
     }
 
@@ -170,18 +171,24 @@ public class MoviesListingFragment
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putParcelableArrayList(Constants.MOVIE, (ArrayList<? extends Parcelable>) movies);
+        for (Listener listener : getListeners()) {
+            listener.onSaveInstanceState(outState);
+        }
         super.onSaveInstanceState(outState);
     }
 
     @Override
     public void searchViewClicked(String searchText){
-        moviesPresenter.searchMovie(searchText);
+        for (Listener listener : getListeners()) {
+            listener.searchViewClicked(searchText);
+        }
     }
 
     @Override
     public void searchViewBackButtonClicked() {
-        moviesPresenter.searchMovieBackPressed();
+        for (Listener listener : getListeners()) {
+            listener.searchViewBackButtonClicked();
+        }
     }
 
     public interface Callback {
