@@ -47,6 +47,7 @@ public class MoviesListingPresenterImplTest {
         SUT = new MoviesListingPresenterImpl(interactor);
         movies.add(new Movie());
         SUT.setView(view);
+
     }
 
     @After
@@ -54,8 +55,32 @@ public class MoviesListingPresenterImplTest {
         SUT.destroy();
     }
 
+    // ==> obvious cases
+    // setView - register view, view is not null
+    // destroy - unregister view, view is null
+    // fetchFirstPage - correct page go to interactor
+    // fetchFirstPage - view show loading indicator
+    // fetchFirstPage - success - view show list movies, hide loading indicator
+    // fetchFirstPage - fail - view loading failed, hide loading indicator
+    // fetchNextPage - correct page to indicator
+    // fetchNextPage - view show loading indicator
+    // fetchNextPage - success - view show list movies, hide loading indicator
+    // fetchNextPage - fail - view show load failed, hide loading indicator
+    // searchMovie - correct data go to interactor
+    // searchMovie - view show loading indicator
+    // searchMovie - success - view show list movies, hide loading indicator
+    // searchMovie - fail - view show loading failed, hide loading indicator
+    // getCurrentData - return current data list
+    // getFirstMovie - when movie list not empty - return the first one
+    // getFirstMovie - when movie list is empty - do nothing
+
+    // ==> the following cases are a little implicit, requiring specs
+    // searchMovieBackPressed - when showingSearchResult - fetchCurrentPage
+    // searchMovieBackPressed - when not showingSearchResult - do nothing
+    // ....
+
     @Test
-    public void fetchFirstPage_success_correctPageToInteractor() {
+    public void fetchFirstPage_correctPageToInteractor() {
         // given:
         ArgumentCaptor<Integer> acInt = ArgumentCaptor.forClass(Integer.class);
         // when:
@@ -66,9 +91,4 @@ public class MoviesListingPresenterImplTest {
         assertThat(acInt.getValue(), is(1));
     }
 
-    // fetch first page - success -
-
-    // fetch next page - success - correct page go to interactor
-
-    //
 }
