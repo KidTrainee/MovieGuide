@@ -2,12 +2,14 @@ package com.esoxjem.movieguide.listing;
 
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.RxSchedulerRule;
+import com.esoxjem.movieguide.listing.MoviesListingInteractor.Listener;
 
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 
@@ -16,6 +18,8 @@ import java.util.List;
 
 import io.reactivex.Observable;
 
+import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.verify;
@@ -33,30 +37,38 @@ public class MoviesListingPresenterImplTest {
     @Mock
     private MoviesListingView view;
 
-    private List<Movie> movies = new ArrayList<>(0);
+    private List<Movie> movies = new ArrayList<>();
 
-    private MoviesListingPresenterImpl presenter;
+    private MoviesListingPresenterImpl SUT;
 
     @Before
     public void setUp() throws Exception {
-        presenter = new MoviesListingPresenterImpl(interactor);
+
+        SUT = new MoviesListingPresenterImpl(interactor);
+        movies.add(new Movie());
+        SUT.setView(view);
     }
 
     @After
     public void teardown() {
-        presenter.destroy();
+        SUT.destroy();
     }
 
     @Test
-    public void shouldBeAbleToDisplayMovies() {
+    public void fetchFirstPage_success_correctPageToInteractor() {
         // given:
-        Observable<List<Movie>> responseObservable = Observable.just(movies);
-        when(interactor.fetchMovies(anyInt())).thenReturn(responseObservable);
-
+        ArgumentCaptor<Integer> acInt = ArgumentCaptor.forClass(Integer.class);
         // when:
-        presenter.setView(view);
+        SUT.fetchFirstPage();
 
         // then:
-        verify(view).showMovies(movies);
+        verify(interactor).fetchMovies(acInt.capture(), any(Listener.class));
+        assertThat(acInt.getValue(), is(1));
     }
+
+    // fetch first page - success -
+
+    // fetch next page - success - correct page go to interactor
+
+    //
 }

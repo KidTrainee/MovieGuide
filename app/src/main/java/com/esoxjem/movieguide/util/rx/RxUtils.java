@@ -1,4 +1,4 @@
-package com.esoxjem.movieguide.util;
+package com.esoxjem.movieguide.util.rx;
 
 
 import io.reactivex.disposables.Disposable;

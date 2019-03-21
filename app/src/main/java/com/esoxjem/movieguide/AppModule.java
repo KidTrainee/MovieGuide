@@ -12,6 +12,8 @@ import com.esoxjem.movieguide.listing.sorting.SortingModule;
 import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.NetworkModule;
 import com.esoxjem.movieguide.network.TmdbWebService;
+import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
+import com.esoxjem.movieguide.util.schedulers.SchedulerProvider;
 
 import io.realm.Realm;
 
@@ -64,5 +66,9 @@ public class AppModule
 
     public SortingOptionStore getSortingOptionStore() {
         return new SortingOptionStore(getAppDefaultSharedPref());
+    }
+
+    public BaseSchedulerProvider getSchedulerProvider() {
+        return new SchedulerProvider();
     }
 }

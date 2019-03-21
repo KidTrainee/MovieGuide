@@ -1,6 +1,7 @@
 package com.esoxjem.movieguide.listing;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.MoviesWrapper;
@@ -9,7 +10,9 @@ import com.esoxjem.movieguide.listing.sorting.SortType;
 import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
 import com.esoxjem.movieguide.util.EspressoIdlingResource;
-import com.esoxjem.movieguide.util.RxUtils;
+import com.esoxjem.movieguide.util.rx.ExceptionTracer;
+import com.esoxjem.movieguide.util.rx.RxUtils;
+import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,15 +20,18 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observable;
+import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
+import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**
  * @author arun
  */
 class MoviesListingInteractorImpl implements MoviesListingInteractor {
+    private static final String TAG = MoviesListingInteractorImpl.class.getSimpleName();
     private FavoritesInteractor favoritesInteractor;
     private TmdbWebService tmdbWebService;
     private SortingOptionStore sortingOptionStore;
@@ -36,7 +42,8 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     private Disposable fetchSubscription;
 
     MoviesListingInteractorImpl(FavoritesInteractor favoritesInteractor,
-                                TmdbWebService tmdbWebService, SortingOptionStore store) {
+                                TmdbWebService tmdbWebService,
+                                SortingOptionStore store) {
         this.favoritesInteractor = favoritesInteractor;
         this.tmdbWebService = tmdbWebService;
         sortingOptionStore = store;
@@ -57,7 +64,7 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     public Observable<List<Movie>> fetchMovies(int page) {
         int selectedOption = sortingOptionStore.getSelectedOption();
         if (selectedOption == SortType.MOST_POPULAR.getValue()) {
-            return tmdbWebService.popularMovies(page).map(MoviesWrapper::getMovieList);
+            return tmdbWebService.popularMovies(page).map(moviesWrapper -> moviesWrapper.getMovieList());
         } else if (selectedOption == SortType.HIGHEST_RATED.getValue()) {
             return tmdbWebService.highestRatedMovies(page).map(MoviesWrapper::getMovieList);
         } else if (selectedOption == SortType.NEWEST.getValue()) {
