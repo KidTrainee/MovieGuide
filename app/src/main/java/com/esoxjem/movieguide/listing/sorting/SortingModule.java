@@ -12,23 +12,20 @@ import com.esoxjem.movieguide.AppModule;
 public class SortingModule
 {
 
-    public SortingModule(AppCompatActivity activity) {
+    public SortingModule(AppModule appModule, AppCompatActivity activity) {
+        mAppModule = appModule;
         mActivity = activity;
     }
 
+    private final AppModule mAppModule;
     private final AppCompatActivity mActivity;
 
     private Context getContext() {
         return mActivity;
     }
 
-    SortingDialogInteractor providesSortingDialogInteractor()
-    {
-        return new SortingDialogInteractorImpl(getSortingOptionStore());
-    }
-
     private SortingOptionStore getSortingOptionStore() {
-        return new SortingOptionStore(getContext());
+        return mAppModule.getSortingOptionStore();
     }
 
     SortingDialogPresenter getSortingDialogPresenter()

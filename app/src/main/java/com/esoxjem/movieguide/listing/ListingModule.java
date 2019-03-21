@@ -28,11 +28,7 @@ public class ListingModule {
         return new MoviesListingInteractorImpl(
                 mAppModule.getFavoritesInteractor(),
                 mAppModule.getTmdbWebService(),
-                getSortingOptionStore());
-    }
-
-    private SortingOptionStore getSortingOptionStore() {
-        return new SortingOptionStore(getContext());
+                mAppModule.getSortingOptionStore());
     }
 
     public MoviesListingPresenter getMoviesListingPresenter() {
