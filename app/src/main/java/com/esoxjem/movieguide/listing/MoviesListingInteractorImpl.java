@@ -19,6 +19,7 @@ import java.util.List;
 import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 import io.reactivex.schedulers.Schedulers;
 
 /**
@@ -42,7 +43,7 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     }
 
     @Override
-    public void unregister() {
+    public void cancel() {
         RxUtils.unsubscribe(fetchSubscription, movieSearchSubscription);
     }
 
@@ -82,6 +83,7 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
 
     @Override
     public void fetchMovies(int page, Listener listener) {
+        EspressoIdlingResource.increment();
         fetchSubscription = fetchMovies(page)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())

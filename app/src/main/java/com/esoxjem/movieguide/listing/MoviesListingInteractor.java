@@ -12,10 +12,6 @@ import io.reactivex.disposables.Disposable;
  */
 public interface MoviesListingInteractor
 {
-    void unregister();
-
-    void fetchMovies(int page, Listener listener);
-
     interface Listener {
 
         // region InteractorListener methods
@@ -32,5 +28,7 @@ public interface MoviesListingInteractor
     Observable<List<Movie>> fetchMovies(int page);
     Observable<List<Movie>> searchMovie(String searchQuery);
 
+    void fetchMovies(int page, Listener listener);
     void searchMovie(String searchText, Listener listener);
+    void cancel();
 }

@@ -6,7 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
-import com.esoxjem.movieguide.util.EspressoIdlingResource;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +38,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     public void destroy() {
         mView.unregisterListener(this);
         mView = null;
-        moviesInteractor.unregister();
+        moviesInteractor.cancel();
     }
 
     @Override
@@ -53,7 +52,6 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     }
 
     private void fetchMoviesCurrentPage() {
-        EspressoIdlingResource.increment();
         showLoading();
         moviesInteractor.fetchMovies(mCurrentPage, this);
     }
@@ -127,7 +125,9 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     @Override
     public void onMovieFetchFailed(Throwable e) {
-        mView.loadingFailed(e.getMessage());
+        if (isViewAttached()) {
+            mView.loadingFailed(e.getMessage());
+        }
     }
 
     @Override
@@ -141,7 +141,9 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
 
     @Override
     public void onMovieSearchFailed(Throwable e) {
-        mView.loadingFailed(e.getMessage());
+        if (isViewAttached()) {
+            mView.loadingFailed(e.getMessage());
+        }
     }
     // endregion
 
@@ -165,7 +167,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     public void onViewCreated(Bundle savedInstanceState) {
         if (savedInstanceState != null) {
             this.mMovies.addAll(savedInstanceState.getParcelableArrayList(Constants.MOVIE));
-            if (!mMovies.isEmpty()) {
+            if (!mMovies.isEmpty() && isViewAttached()) {
                 mView.showMovies();
                 mView.showFirstMovie();
             }
@@ -187,6 +189,10 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     @Override
     public void onLoadMore() {
         fetchNextPage();
+    }
+
+    public int getCurrentPage() {
+        return mCurrentPage;
     }
     // endregion
 }
