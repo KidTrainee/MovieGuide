@@ -60,8 +60,7 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
         return selectedOption != SortType.FAVORITES.getValue();
     }
 
-    @Override
-    public Observable<List<Movie>> fetchMovies(int page) {
+    private Observable<List<Movie>> fetchMovies(int page) {
         int selectedOption = sortingOptionStore.getSelectedOption();
         if (selectedOption == SortType.MOST_POPULAR.getValue()) {
             return tmdbWebService.popularMovies(page).map(moviesWrapper -> moviesWrapper.getMovieList());

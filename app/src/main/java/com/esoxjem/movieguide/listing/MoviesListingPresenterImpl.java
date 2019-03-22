@@ -34,6 +34,10 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         mView.registerListener(this);
     }
 
+    public MoviesListingView getView() {
+        return mView;
+    }
+
     @Override
     public void destroy() {
         mView.unregisterListener(this);
