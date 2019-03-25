@@ -1,8 +1,5 @@
 package com.esoxjem.movieguide.network.pojo;
 
-import android.os.Parcel;
-import android.os.Parcelable;
-
 import com.squareup.moshi.Json;
 
 /**
@@ -23,32 +20,16 @@ public class VideoPojo {
         return id;
     }
 
-    public void setId(String id) {
-        this.id = id;
-    }
-
     public String getName() {
         return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getSite() {
         return site;
     }
 
-    public void setSite(String site) {
-        this.site = site;
-    }
-
     public String getVideoId() {
         return videoId;
-    }
-
-    public void setVideoId(String videoId) {
-        this.videoId = videoId;
     }
 
     public int getSize() {

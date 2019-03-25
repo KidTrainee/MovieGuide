@@ -15,8 +15,7 @@ public class Pojo2DomainMapper {
     public List<Video> parsePOJO(VideoWrapperPojo pojoWrapper) {
         List<Video> domains = new ArrayList<>();
         for (VideoPojo pojo : pojoWrapper.getVideoPojos()) {
-            domains.add(new Video(pojo.getId(), pojo.getName(), pojo.getSite(),
-                    pojo.getVideoId(), pojo.getSize(), pojo.getType()));
+            domains.add(new Video(pojo.getSite(), pojo.getVideoId()));
         }
         return domains;
     }
@@ -24,7 +23,7 @@ public class Pojo2DomainMapper {
     public List<Review> parsePOJO(ReviewWrapperPojo pojoWrapper) {
         List<Review> domains = new ArrayList<>();
         for (ReviewPojo pojo : pojoWrapper.getReviewPojos()) {
-            domains.add(new Review(pojo.getId(), pojo.getAuthor(), pojo.getContent(), pojo.getUrl()));
+            domains.add(new Review(pojo.getAuthor(), pojo.getContent()));
         }
         return domains;
 
