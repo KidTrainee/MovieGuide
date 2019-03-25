@@ -1,9 +1,11 @@
 package com.esoxjem.movieguide.details;
 
 import com.esoxjem.movieguide.Movie;
-import com.esoxjem.movieguide.Review;
+import com.esoxjem.movieguide.details.domain.GetReviewsUseCase;
+import com.esoxjem.movieguide.details.domain.GetTrailersUseCase;
+import com.esoxjem.movieguide.details.entities.Review;
+import com.esoxjem.movieguide.details.entities.Video;
 import com.esoxjem.movieguide.RxSchedulerRule;
-import com.esoxjem.movieguide.Video;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 
 import org.junit.After;
@@ -16,7 +18,6 @@ import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
 
 import java.net.SocketTimeoutException;
-import java.util.Collections;
 import java.util.List;
 
 import io.reactivex.Observable;
@@ -35,7 +36,9 @@ public class MovieDetailsPresenterImplTest {
     @Mock
     private MovieDetailsView view;
     @Mock
-    private MovieDetailsInteractor movieDetailsInteractor;
+    private GetTrailersUseCase mGetTrailersUseCase;
+    @Mock
+    private GetReviewsUseCase mGetReviewsUseCase;
     @Mock
     private FavoritesInteractor favoritesInteractor;
     @Mock
@@ -50,7 +53,7 @@ public class MovieDetailsPresenterImplTest {
     @Before
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
-        movieDetailsPresenter = new MovieDetailsPresenterImpl(movieDetailsInteractor, favoritesInteractor);
+        movieDetailsPresenter = new MovieDetailsPresenterImpl(mGetTrailersUseCase, mGetReviewsUseCase, favoritesInteractor);
         movieDetailsPresenter.setView(view);
     }
 
@@ -83,7 +86,7 @@ public class MovieDetailsPresenterImplTest {
     public void shouldBeAbleToShowTrailers() {
         when(movie.getId()).thenReturn("12345");
         Observable<List<Video>> responseObservable = Observable.just(videos);
-        when(movieDetailsInteractor.getTrailers(movie.getId())).thenReturn(responseObservable);
+        when(mGetTrailersUseCase.execute(movie.getId())).thenReturn(responseObservable);
 
         movieDetailsPresenter.showTrailers(movie);
 
@@ -93,7 +96,7 @@ public class MovieDetailsPresenterImplTest {
     @Test
     public void shouldFailSilentlyWhenNoTrailers() throws Exception {
         when(movie.getId()).thenReturn("12345");
-        when(movieDetailsInteractor.getTrailers(movie.getId())).thenReturn(Observable.error(new SocketTimeoutException()));
+        when(mGetTrailersUseCase.execute(movie.getId())).thenReturn(Observable.error(new SocketTimeoutException()));
 
         movieDetailsPresenter.showTrailers(movie);
 
@@ -104,7 +107,7 @@ public class MovieDetailsPresenterImplTest {
     public void shouldBeAbleToShowReviews() {
         Observable<List<Review>> responseObservable = Observable.just(reviews);
         when(movie.getId()).thenReturn("12345");
-        when(movieDetailsInteractor.getReviews(movie.getId())).thenReturn(responseObservable);
+        when(mGetReviewsUseCase.execute(movie.getId())).thenReturn(responseObservable);
 
         movieDetailsPresenter.showReviews(movie);
 
@@ -115,7 +118,7 @@ public class MovieDetailsPresenterImplTest {
     @Test
     public void shouldFailSilentlyWhenNoReviews() throws Exception {
         when(movie.getId()).thenReturn("12345");
-        when(movieDetailsInteractor.getReviews(movie.getId())).thenReturn(Observable.error(new SocketTimeoutException()));
+        when(mGetReviewsUseCase.execute(movie.getId())).thenReturn(Observable.error(new SocketTimeoutException()));
 
         movieDetailsPresenter.showReviews(movie);
 

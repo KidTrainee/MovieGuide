@@ -1,8 +1,8 @@
 package com.esoxjem.movieguide.network;
 
 import com.esoxjem.movieguide.MoviesWrapper;
-import com.esoxjem.movieguide.ReviewsWrapper;
-import com.esoxjem.movieguide.VideoWrapper;
+import com.esoxjem.movieguide.network.pojo.ReviewWrapperPojo;
+import com.esoxjem.movieguide.network.pojo.VideoWrapperPojo;
 
 import retrofit2.http.GET;
 import retrofit2.http.Path;
@@ -25,10 +25,10 @@ public interface TmdbWebService {
     Observable<MoviesWrapper> newestMovies(@Query("release_date.lte") String maxReleaseDate, @Query("vote_count.gte") int minVoteCount);
 
     @GET("3/movie/{movieId}/videos")
-    Observable<VideoWrapper> trailers(@Path("movieId") String movieId);
+    Observable<VideoWrapperPojo> trailers(@Path("movieId") String movieId);
 
     @GET("3/movie/{movieId}/reviews")
-    Observable<ReviewsWrapper> reviews(@Path("movieId") String movieId);
+    Observable<ReviewWrapperPojo> reviews(@Path("movieId") String movieId);
 
     @GET("3/search/movie?language=en-US&page=1")
     Observable<MoviesWrapper> searchMovies(@Query("query") String searchQuery);

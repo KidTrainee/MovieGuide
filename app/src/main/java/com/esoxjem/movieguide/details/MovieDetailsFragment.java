@@ -8,7 +8,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.FloatingActionButton;
-import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -27,8 +26,8 @@ import com.esoxjem.movieguide.Api;
 import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
-import com.esoxjem.movieguide.Review;
-import com.esoxjem.movieguide.Video;
+import com.esoxjem.movieguide.details.entities.Review;
+import com.esoxjem.movieguide.details.entities.Video;
 
 import java.util.List;
 
@@ -62,7 +61,7 @@ public class MovieDetailsFragment extends BaseMovieDetailsFragment
     HorizontalScrollView horizontalScrollView;
     @BindView(R.id.reviews_label)
     TextView reviews;
-    @BindView(R.id.reviews)
+    @BindView(R.id.reviewContainer)
     LinearLayout reviewsContainer;
     @BindView(R.id.favorite)
     FloatingActionButton favorite;

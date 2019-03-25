@@ -1,8 +1,10 @@
 package com.esoxjem.movieguide.details;
 
 import com.esoxjem.movieguide.Movie;
-import com.esoxjem.movieguide.Review;
-import com.esoxjem.movieguide.Video;
+import com.esoxjem.movieguide.details.domain.GetReviewsUseCase;
+import com.esoxjem.movieguide.details.domain.GetTrailersUseCase;
+import com.esoxjem.movieguide.details.entities.Review;
+import com.esoxjem.movieguide.details.entities.Video;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.util.rx.RxUtils;
 
@@ -16,14 +18,18 @@ import io.reactivex.schedulers.Schedulers;
  * @author arun
  */
 class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
+    private final GetTrailersUseCase mGetTrailersUseCase;
     private MovieDetailsView view;
-    private MovieDetailsInteractor movieDetailsInteractor;
+    private final GetReviewsUseCase mGetReviewsUseCase;
     private FavoritesInteractor favoritesInteractor;
     private Disposable trailersSubscription;
     private Disposable reviewSubscription;
 
-    MovieDetailsPresenterImpl(MovieDetailsInteractor movieDetailsInteractor, FavoritesInteractor favoritesInteractor) {
-        this.movieDetailsInteractor = movieDetailsInteractor;
+    MovieDetailsPresenterImpl(GetTrailersUseCase getTrailersUseCase,
+                              GetReviewsUseCase getReviewsUseCase,
+                              FavoritesInteractor favoritesInteractor) {
+        mGetTrailersUseCase = getTrailersUseCase;
+        mGetReviewsUseCase = getReviewsUseCase;
         this.favoritesInteractor = favoritesInteractor;
     }
 
@@ -51,7 +57,7 @@ class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
 
     @Override
     public void showTrailers(Movie movie) {
-        trailersSubscription = movieDetailsInteractor.getTrailers(movie.getId())
+        trailersSubscription = mGetTrailersUseCase.execute(movie.getId())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onGetTrailersSuccess, t -> onGetTrailersFailure());
@@ -69,7 +75,7 @@ class MovieDetailsPresenterImpl implements MovieDetailsPresenter {
 
     @Override
     public void showReviews(Movie movie) {
-        reviewSubscription = movieDetailsInteractor.getReviews(movie.getId()).subscribeOn(Schedulers.io())
+        reviewSubscription = mGetReviewsUseCase.execute(movie.getId()).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(this::onGetReviewsSuccess, t -> onGetReviewsFailure());
     }
