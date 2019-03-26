@@ -6,8 +6,8 @@ import com.esoxjem.movieguide.RxSchedulerRule;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor.Listener;
 import com.esoxjem.movieguide.listing.domain.MoviesListingInteractorImpl;
-import com.esoxjem.movieguide.listing.sorting.SortType;
-import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
+import com.esoxjem.movieguide.sorting.SortType;
+import com.esoxjem.movieguide.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
 
 import java.util.ArrayList;

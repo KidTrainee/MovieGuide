@@ -181,11 +181,11 @@ public class MovieDetailsFragment extends BaseMovieDetailsFragment
             {
                 View thumbContainer = inflater.inflate(R.layout.video, this.trailers, false);
                 ImageView thumbView = ButterKnife.findById(thumbContainer, R.id.video_thumb);
-                thumbView.setTag(R.id.glide_tag, Video.getUrl(trailer));
+                thumbView.setTag(R.id.glide_tag, trailer.getUrl());
                 thumbView.requestLayout();
                 thumbView.setOnClickListener(this);
                 Glide.with(getContext())
-                        .load(Video.getThumbnailUrl(trailer))
+                        .load(trailer.getThumbnailUrl())
                         .apply(options)
                         .into(thumbView);
                 this.trailers.addView(thumbContainer);

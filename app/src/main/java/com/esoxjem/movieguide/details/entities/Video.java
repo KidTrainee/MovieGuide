@@ -20,17 +20,17 @@ public class Video {
         this.videoId = videoId;
     }
 
-    public String getUrl(Video video) {
-        if (SITE_YOUTUBE.equalsIgnoreCase(video.getSite())) {
-            return String.format(Api.YOUTUBE_VIDEO_URL, video.getVideoId());
+    public String getUrl() {
+        if (SITE_YOUTUBE.equalsIgnoreCase(getSite())) {
+            return String.format(Api.YOUTUBE_VIDEO_URL, getVideoId());
         } else {
             return Constants.EMPTY;
         }
     }
 
-    public String getThumbnailUrl(Video video) {
-        if (SITE_YOUTUBE.equalsIgnoreCase(video.getSite())) {
-            return String.format(Api.YOUTUBE_THUMBNAIL_URL, video.getVideoId());
+    public String getThumbnailUrl() {
+        if (SITE_YOUTUBE.equalsIgnoreCase(getSite())) {
+            return String.format(Api.YOUTUBE_THUMBNAIL_URL, getVideoId());
         } else {
             return Constants.EMPTY;
         }

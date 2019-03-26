@@ -1,4 +1,4 @@
-package com.esoxjem.movieguide.listing.sorting;
+package com.esoxjem.movieguide.sorting;
 
 import android.app.Dialog;
 import android.content.Context;

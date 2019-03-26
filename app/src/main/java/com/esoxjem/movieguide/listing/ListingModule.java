@@ -4,7 +4,6 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 
 import com.esoxjem.movieguide.AppModule;
-import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 
 /**
  * @author pulkitkumar

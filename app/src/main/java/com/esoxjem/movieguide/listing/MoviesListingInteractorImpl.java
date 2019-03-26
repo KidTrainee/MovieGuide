@@ -1,18 +1,15 @@
 package com.esoxjem.movieguide.listing;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.MoviesWrapper;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
-import com.esoxjem.movieguide.listing.sorting.SortType;
-import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
+import com.esoxjem.movieguide.sorting.SortType;
+import com.esoxjem.movieguide.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
 import com.esoxjem.movieguide.util.EspressoIdlingResource;
-import com.esoxjem.movieguide.util.rx.ExceptionTracer;
 import com.esoxjem.movieguide.util.rx.RxUtils;
-import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -20,11 +17,8 @@ import java.util.Calendar;
 import java.util.List;
 
 import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 /**

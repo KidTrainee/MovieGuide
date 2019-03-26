@@ -3,13 +3,11 @@ package com.esoxjem.movieguide;
 import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.favorites.FavoritesModule;
 import com.esoxjem.movieguide.favorites.FavoritesStore;
-import com.esoxjem.movieguide.listing.sorting.SortingModule;
-import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
+import com.esoxjem.movieguide.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.NetworkModule;
 import com.esoxjem.movieguide.network.TmdbWebService;
 import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
@@ -17,7 +15,7 @@ import com.esoxjem.movieguide.util.schedulers.SchedulerProvider;
 
 import io.realm.Realm;
 
-import static com.esoxjem.movieguide.listing.sorting.SortingOptionStore.PREF_NAME;
+import static com.esoxjem.movieguide.sorting.SortingOptionStore.PREF_NAME;
 
 /**
  * @author arunsasidharan

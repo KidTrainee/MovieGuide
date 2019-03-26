@@ -1,4 +1,4 @@
-package com.esoxjem.movieguide.listing.sorting;
+package com.esoxjem.movieguide.sorting;
 
 import com.esoxjem.movieguide.RxSchedulerRule;
 

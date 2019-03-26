@@ -4,7 +4,6 @@ package com.esoxjem.movieguide.listing;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -15,13 +14,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
-import com.esoxjem.movieguide.listing.sorting.SortingDialogFragment;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.esoxjem.movieguide.sorting.SortingDialogFragment;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;

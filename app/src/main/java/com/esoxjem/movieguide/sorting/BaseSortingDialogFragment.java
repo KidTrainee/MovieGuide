@@ -1,4 +1,4 @@
-package com.esoxjem.movieguide.listing.sorting;
+package com.esoxjem.movieguide.sorting;
 
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.AppCompatActivity;
