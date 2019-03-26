@@ -2,8 +2,7 @@ package com.esoxjem.movieguide.listing;
 
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.RxSchedulerRule;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor.Listener;
+import com.esoxjem.movieguide.listing.MoviesListingInteractor.Listener;
 
 import org.junit.Before;
 import org.junit.Rule;

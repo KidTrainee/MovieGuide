@@ -8,10 +8,10 @@ import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.favorites.FavoritesModule;
 import com.esoxjem.movieguide.favorites.FavoritesStore;
 import com.esoxjem.movieguide.sorting.SortingOptionStore;
-import com.esoxjem.movieguide.network.NetworkModule;
-import com.esoxjem.movieguide.network.TmdbWebService;
-import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
-import com.esoxjem.movieguide.util.schedulers.SchedulerProvider;
+import com.esoxjem.movieguide.common.network.NetworkModule;
+import com.esoxjem.movieguide.common.network.TmdbWebService;
+import com.esoxjem.movieguide.common.util.schedulers.BaseSchedulerProvider;
+import com.esoxjem.movieguide.common.util.schedulers.SchedulerProvider;
 
 import io.realm.Realm;
 

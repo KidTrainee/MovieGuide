@@ -17,9 +17,9 @@ import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.BitmapImageViewTarget;
 import com.bumptech.glide.request.transition.Transition;
-import com.esoxjem.movieguide.Api;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
+import com.esoxjem.movieguide.common.util.Api;
 
 import java.util.List;
 

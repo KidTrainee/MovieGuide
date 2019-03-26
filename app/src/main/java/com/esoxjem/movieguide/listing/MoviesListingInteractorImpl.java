@@ -7,9 +7,9 @@ import com.esoxjem.movieguide.MoviesWrapper;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.sorting.SortType;
 import com.esoxjem.movieguide.sorting.SortingOptionStore;
-import com.esoxjem.movieguide.network.TmdbWebService;
-import com.esoxjem.movieguide.util.EspressoIdlingResource;
-import com.esoxjem.movieguide.util.rx.RxUtils;
+import com.esoxjem.movieguide.common.network.TmdbWebService;
+import com.esoxjem.movieguide.common.util.EspressoIdlingResource;
+import com.esoxjem.movieguide.common.util.rx.RxUtils;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,7 +24,7 @@ import io.reactivex.schedulers.Schedulers;
 /**
  * @author arun
  */
-class MoviesListingInteractorImpl implements MoviesListingInteractor {
+public class MoviesListingInteractorImpl implements MoviesListingInteractor {
     private static final String TAG = MoviesListingInteractorImpl.class.getSimpleName();
     private FavoritesInteractor favoritesInteractor;
     private TmdbWebService tmdbWebService;

@@ -12,13 +12,13 @@ import android.view.MenuItem;
 
 
 import com.esoxjem.movieguide.R;
-import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.common.BaseActivity;
-import com.esoxjem.movieguide.details.MovieDetailsActivity;
-import com.esoxjem.movieguide.details.MovieDetailsFragment;
+import com.esoxjem.movieguide.common.util.Constants;
+import com.esoxjem.movieguide.moviedetails.MovieDetailsActivity;
+import com.esoxjem.movieguide.moviedetails.MovieDetailsFragment;
 import com.esoxjem.movieguide.Movie;
-import com.esoxjem.movieguide.util.rx.RxUtils;
-import com.esoxjem.movieguide.util.EspressoIdlingResource;
+import com.esoxjem.movieguide.common.util.rx.RxUtils;
+import com.esoxjem.movieguide.common.util.EspressoIdlingResource;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
 import java.util.concurrent.TimeUnit;
 import io.reactivex.disposables.Disposable;

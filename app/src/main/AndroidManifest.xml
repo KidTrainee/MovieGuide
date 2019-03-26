@@ -21,7 +21,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".details.MovieDetailsActivity"
+            android:name=".moviedetails.MovieDetailsActivity"
             android:parentActivityName=".listing.MoviesListingActivity"
             android:theme="@style/AppTheme">
             <meta-data

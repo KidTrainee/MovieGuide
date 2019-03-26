@@ -1,0 +1,36 @@
+package com.esoxjem.movieguide.common.network;
+
+import com.esoxjem.movieguide.MoviesWrapper;
+import com.esoxjem.movieguide.common.network.pojo.ReviewWrapperPojo;
+import com.esoxjem.movieguide.common.network.pojo.VideoWrapperPojo;
+
+import retrofit2.http.GET;
+import retrofit2.http.Path;
+import io.reactivex.Observable;
+import retrofit2.http.Query;
+
+/**
+ * Created by ivan on 8/20/2017.
+ */
+
+public interface TmdbWebService {
+
+    @GET("3/discover/movie?language=en&sort_by=popularity.desc")
+    Observable<MoviesWrapper> popularMovies(@Query("page") int page);
+
+    @GET("3/discover/movie?vote_count.gte=500&language=en&sort_by=vote_average.desc")
+    Observable<MoviesWrapper> highestRatedMovies(@Query("page") int page);
+
+    @GET("3/discover/movie?language=en&sort_by=release_date.desc")
+    Observable<MoviesWrapper> newestMovies(@Query("release_date.lte") String maxReleaseDate, @Query("vote_count.gte") int minVoteCount);
+
+    @GET("3/movie/{movieId}/videos")
+    Observable<VideoWrapperPojo> trailers(@Path("movieId") String movieId);
+
+    @GET("3/movie/{movieId}/reviews")
+    Observable<ReviewWrapperPojo> reviews(@Path("movieId") String movieId);
+
+    @GET("3/search/movie?language=en-US&page=1")
+    Observable<MoviesWrapper> searchMovies(@Query("query") String searchQuery);
+
+}

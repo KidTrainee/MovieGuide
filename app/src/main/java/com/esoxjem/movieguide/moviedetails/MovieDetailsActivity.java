@@ -1,0 +1,45 @@
+package com.esoxjem.movieguide.moviedetails;
+
+import android.os.Bundle;
+import android.support.v4.app.NavUtils;
+import android.view.MenuItem;
+
+import com.esoxjem.movieguide.R;
+import com.esoxjem.movieguide.Movie;
+import com.esoxjem.movieguide.common.BaseActivity;
+import com.esoxjem.movieguide.common.util.Constants;
+
+public class MovieDetailsActivity extends BaseActivity
+{
+    @Override
+    protected void onCreate(Bundle savedInstanceState)
+    {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_movie_details);
+
+        if (savedInstanceState == null)
+        {
+            Bundle extras = getIntent().getExtras();
+            if (extras != null && extras.containsKey(Constants.MOVIE))
+            {
+                Movie movie = extras.getParcelable(Constants.MOVIE);
+                if (movie != null)
+                {
+                    MovieDetailsFragment movieDetailsFragment = MovieDetailsFragment.getInstance(movie);
+                    getSupportFragmentManager().beginTransaction().add(R.id.movie_details_container, movieDetailsFragment).commit();
+                }
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+        switch (item.getItemId())
+        {
+            case android.R.id.home:
+                NavUtils.navigateUpFromSameTask(this);
+        }
+        return super.onOptionsItemSelected(item);
+    }
+}

@@ -4,8 +4,8 @@ import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.NonNull;
 
-import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
+import com.esoxjem.movieguide.common.util.Constants;
 
 import java.util.ArrayList;
 import java.util.List;
