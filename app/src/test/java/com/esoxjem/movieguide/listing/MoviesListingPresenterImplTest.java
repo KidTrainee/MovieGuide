@@ -55,11 +55,13 @@ public class MoviesListingPresenterImplTest {
     // fetchFirstPage - correct page go to mInteractor
     // fetchFirstPage - view show loading indicator
     // fetchFirstPage - success - view show list MOVIE_LIST, hide loading indicator
-    // fetchFirstPage - fail - view loading failed, hide loading indicator
+    // * fetchFirstPage - internet fail - show retry view
+    // fetchFirstPage - general fail - view loading failed, hide loading indicator
     // fetchNextPage - correct page to indicator
     // fetchNextPage - view show loading indicator
     // fetchNextPage - success - view show list MOVIE_LIST, hide loading indicator
-    // fetchNextPage - fail - view show load failed, hide loading indicator
+    // * fetchNextPage - internet fail - view retry view
+    // fetchNextPage - general fail - view show load failed, hide loading indicator
     // searchMovie - correct data go to mInteractor
     // searchMovie - view show loading indicator
     // searchMovie - success - view show list MOVIE_LIST, hide loading indicator
@@ -67,6 +69,11 @@ public class MoviesListingPresenterImplTest {
     // getCurrentData - return current data list
     // getFirstMovie - when movie list not empty - return the first one
     // getFirstMovie - when movie list is empty - do nothing
+    // * on retry - correct data send to interactor
+    // * on retry - show loading indicator view
+    // * on retry - success - hide loading indicator
+    // * on retry - success - view show list MOVIE_LIST, hide loading indicator
+    // * on retry - fail - view show loading failed, hide loading indicator
     // ==> the following cases are a little implicit, requiring specs
     // searchMovieBackPressed - when showingSearchResult - fetchCurrentPage
     // searchMovieBackPressed - when not showingSearchResult - do nothing
@@ -138,6 +145,15 @@ public class MoviesListingPresenterImplTest {
         verify(mView, times(0)).showMovies();
         verify(mView).loadingFailed(ac.capture());
         assertThat(ac.getValue(), is("network error"));
+    }
+
+    // fetchFirstPage - internet fail - show retry view
+
+    @Test
+    public void fetchFirstPage_internetError_showRetryView() throws Exception {
+        // Arrange
+        // Act
+        // Assert
     }
 
     // region Helper Methods
