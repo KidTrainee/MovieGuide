@@ -20,20 +20,27 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 /**
  * @author arunsasidharan
  */
 @RunWith(MockitoJUnitRunner.class)
 public class MoviesListingPresenterImplTest {
+    public static final int FIRST_PAGE = 1;
+    public static final int SECOND_PAGE = FIRST_PAGE + 1;
     @Rule
     public RxSchedulerRule rule = new RxSchedulerRule();
     @Mock
     private MoviesListingInteractor mInteractor;
     @Mock
     private MoviesListingView mView;
+
+    @Mock
+    private MoviesListingInteractor.Listener mListener;
 
     private List<Movie> MOVIE_LIST = new ArrayList<>();
 
@@ -138,22 +145,111 @@ public class MoviesListingPresenterImplTest {
     @Test
     public void fetchFirstPage_fail_showLoadingFailed() {
         // Arrange
-        ArgumentCaptor<String> ac = ArgumentCaptor.forClass(String.class);
         // Act
-        SUT.onMovieFetchFailed(new Throwable("network error"));
+        SUT.onMovieFetchFailed(new Throwable(""));
         // Assert
         verify(mView, times(0)).showMovies();
-        verify(mView).loadingFailed(ac.capture());
-        assertThat(ac.getValue(), is("network error"));
+        verify(mView).loadingFailed("");
     }
 
-    // fetchFirstPage - internet fail - show retry view
+    // fetchFirstPage - internet fail - show retry indicator
 
     @Test
-    public void fetchFirstPage_internetError_showRetryView() throws Exception {
+    public void fetchFirstPage_internetError_showRetryIndicator() throws Exception {
         // Arrange
         // Act
+        SUT.onNetworkError();
         // Assert
+        verify(mView).showRetryIndicator();
+    }
+
+    // fetchNextPage - internet fail - view retry view
+
+    @Test
+    public void fetchNextPage_internetError_showRetryIndicator() throws Exception {
+        // Arrange
+        // Act
+        SUT.onNetworkError();
+        // Assert
+        verify(mView).showRetryIndicator();
+    }
+    
+    // fetchFirstPage - retry - correct data send to interactor
+    @Test
+    public void fetchFirstPage_retry_correctDataSendToInteractor() throws Exception {
+        // Arrange
+        ArgumentCaptor<Integer> acInt = ArgumentCaptor.forClass(Integer.class);
+
+        // Act
+        SUT.fetchFirstPage();
+        SUT.onRetry();
+        // Assert
+        // mInteractor call twice, one with fetch first movies, one after getting error.
+        verify(mInteractor, times(2)).fetchMovies(acInt.capture(), any(Listener.class));
+        assertThat(acInt.getValue(), is(FIRST_PAGE));
+    }
+    
+    // fetchNextPage - retry - correct data send to interactor
+    @Test
+    public void fetchNextPage_retry_correctDataSendToInteractor() throws Exception {
+        // Arrange
+        ArgumentCaptor<Integer> acInt = ArgumentCaptor.forClass(Integer.class);
+        when(mInteractor.isPaginationSupported()).thenReturn(true);
+        // Act
+        SUT.fetchFirstPage();
+        SUT.fetchNextPage();
+        SUT.onRetry();
+        // Assert
+        // mInteractor call twice, one with fetch first movies, one after getting error.
+        verify(mInteractor, times(3)).fetchMovies(acInt.capture(), any(Listener.class));
+        assertThat(acInt.getValue(), is(SECOND_PAGE));
+    }
+    
+    // on retry - show loading indicator view
+
+    @Test
+    public void retry_showLoadingIndicator() throws Exception {
+        // Arrange
+        // Act
+        SUT.onRetry();
+        // Assert
+        verify(mView).loadingStarted();
+    }
+
+    // on retry - success - view show list MOVIE_LIST, hide loading indicator
+    @Test
+    public void retry_success_hideLoadingIndicator() throws Exception {
+        // Arrange
+        // Act
+        SUT.onRetry();
+        SUT.onMovieFetchSuccess(MOVIE_LIST);
+        // Assert
+        verify(mView).loadingFinished();
+        verify(mView).showMovies();
+    }
+
+    // on retry - fail - view show loading failed, hide loading indicator
+    @Test
+    public void retry_fail_hideLoadingIndicator() throws Exception {
+        // Arrange
+
+        // Act
+        SUT.onRetry();
+        SUT.onMovieFetchFailed(new Throwable(""));
+        // Assert
+        verify(mView).loadingFinished();
+        verify(mView).loadingFailed("");
+    }
+
+    // on retry - internet error - view show retry indicator, hide loading indicator
+    @Test
+    public void retry_internetError_hideLoadingIndicator() throws Exception {
+        // Arrange
+        // Act
+        SUT.onRetry();
+        SUT.onNetworkError();
+        // Assert
+        verify(mView).showRetryIndicator();
     }
 
     // region Helper Methods
@@ -161,6 +257,10 @@ public class MoviesListingPresenterImplTest {
     private void initData() {
         MOVIE_LIST.add(new Movie());
     }
+
+    // endregion
+
+    // region Helper Classes
 
     // endregion
 }
