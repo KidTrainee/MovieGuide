@@ -33,6 +33,7 @@ interface MoviesListingView extends ObservableView<MoviesListingView.Listener>
     void showMovies();
     void showFirstMovie();
     void loadingStarted();
+    void loadingFinished();
     void loadingFailed(String errorMessage);
     void onMovieClicked(Movie movie);
 }

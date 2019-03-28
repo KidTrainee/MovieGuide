@@ -2,8 +2,7 @@ package com.esoxjem.movieguide.listing;
 
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.RxSchedulerRule;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor.Listener;
+import com.esoxjem.movieguide.listing.MoviesListingInteractor.Listener;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -21,7 +20,6 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.notNull;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
@@ -123,13 +121,13 @@ public class MoviesListingPresenterImplTest {
         // Act
         SUT.onMovieFetchSuccess(MOVIE_LIST);
         // Assert
+        verify(mView).loadingFinished();
         verify(mView).showMovies();
-        // don't test hideLoadingIndicator since show loading indicator with snackbar
     }
 
-    // fetchFirstPage - fail -
+    // fetchFirstPage - fail
     // - view loading failed
-    // - hide loading indicator (no need since using snackbar
+    // - hide loading indicator (no need since using snackbar)
     @Test
     public void fetchFirstPage_fail_showLoadingFailed() {
         // Arrange
@@ -140,7 +138,6 @@ public class MoviesListingPresenterImplTest {
         verify(mView, times(0)).showMovies();
         verify(mView).loadingFailed(ac.capture());
         assertThat(ac.getValue(), is("network error"));
-        // don't test hideLoadingIndicator since show loading indicator with snackbar
     }
 
     // region Helper Methods

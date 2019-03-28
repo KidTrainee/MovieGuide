@@ -123,6 +123,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
             mMovies.addAll(movies);
         }
         if (isViewAttached()) {
+            mView.loadingFinished();
             mView.showMovies();
         }
     }
@@ -139,6 +140,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         if (isViewAttached()) {
             mMovies.clear();
             mMovies.addAll(movies);
+            mView.loadingFinished();
             mView.showMovies();
         }
     }

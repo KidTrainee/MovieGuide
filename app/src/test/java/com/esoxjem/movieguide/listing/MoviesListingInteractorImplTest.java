@@ -4,8 +4,7 @@ import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.MoviesWrapper;
 import com.esoxjem.movieguide.RxSchedulerRule;
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractor.Listener;
-import com.esoxjem.movieguide.listing.domain.MoviesListingInteractorImpl;
+import com.esoxjem.movieguide.listing.MoviesListingInteractor.Listener;
 import com.esoxjem.movieguide.listing.sorting.SortType;
 import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
@@ -23,8 +22,6 @@ import io.reactivex.Observable;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 

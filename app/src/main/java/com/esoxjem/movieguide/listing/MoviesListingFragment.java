@@ -43,6 +43,7 @@ public class MoviesListingFragment
 
     private Callback callback;
     private Unbinder unbinder;
+    private Snackbar mSnackbar;
 
     public MoviesListingFragment() {
         // Required empty public constructor
@@ -140,7 +141,13 @@ public class MoviesListingFragment
 
     @Override
     public void loadingStarted() {
-        Snackbar.make(moviesListingRC, R.string.loading_movies, Snackbar.LENGTH_SHORT).show();
+        mSnackbar = Snackbar.make(moviesListingRC, R.string.loading_movies, Snackbar.LENGTH_INDEFINITE);
+        mSnackbar.show();
+    }
+
+    @Override
+    public void loadingFinished() {
+        if (mSnackbar!=null && mSnackbar.isShown()) mSnackbar.dismiss();
     }
 
     @Override
