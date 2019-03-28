@@ -12,6 +12,7 @@ import java.util.List;
  */
 interface MoviesListingView extends ObservableView<MoviesListingView.Listener>
 {
+    // view generates these events
     interface Listener {
         void searchViewClicked(String searchText);
 
@@ -38,5 +39,5 @@ interface MoviesListingView extends ObservableView<MoviesListingView.Listener>
     void loadingFinished();
     void loadingFailed(String errorMessage);
     void onMovieClicked(Movie movie);
-    void showNetworkError();
+    void showRetryIndicator();
 }

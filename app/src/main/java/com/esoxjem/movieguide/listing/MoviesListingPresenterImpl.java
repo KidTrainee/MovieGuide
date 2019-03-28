@@ -55,17 +55,6 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         return mMovies.get(0);
     }
 
-    private void fetchMoviesCurrentPage() {
-        showLoading();
-        moviesInteractor.fetchMovies(mCurrentPage, this);
-    }
-
-    private void fetchMovieSearchResult(@NonNull final String searchText) {
-        showingSearchResult = true;
-        showLoading();
-        moviesInteractor.searchMovie(searchText, this);
-    }
-
     @Override
     public void fetchFirstPage() {
         mCurrentPage = 1;
@@ -101,16 +90,28 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
         }
     }
 
+    // region Helper Methods
+    private boolean isViewAttached() {
+        return mView != null;
+    }
+
     private void showLoading() {
         if (isViewAttached()) {
             mView.loadingStarted();
         }
     }
 
-    // region Helper methods
-    private boolean isViewAttached() {
-        return mView != null;
+    private void fetchMoviesCurrentPage() {
+        showLoading();
+        moviesInteractor.fetchMovies(mCurrentPage, this);
     }
+
+    private void fetchMovieSearchResult(@NonNull final String searchText) {
+        showingSearchResult = true;
+        showLoading();
+        moviesInteractor.searchMovie(searchText, this);
+    }
+
     // endregion
 
     // region InteractorListener methods
@@ -138,7 +139,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     @Override
     public void onNetworkError() {
         if (isViewAttached()) {
-            mView.showNetworkError();
+            mView.showRetryIndicator();
         }
     }
 

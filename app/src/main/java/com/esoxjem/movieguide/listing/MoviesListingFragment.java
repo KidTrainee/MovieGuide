@@ -157,7 +157,7 @@ public class MoviesListingFragment
     }
 
     @Override
-    public void showNetworkError() {
+    public void showRetryIndicator() {
         mLoadMoreOnScrollListener.setIsLoading(false);
         Snackbar.make(moviesListingRC, "Unable to connect", Snackbar.LENGTH_INDEFINITE)
                 .setAction("RETRY", view -> {
