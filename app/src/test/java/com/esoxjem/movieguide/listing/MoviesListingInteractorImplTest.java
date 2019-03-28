@@ -9,7 +9,11 @@ import com.esoxjem.movieguide.listing.sorting.SortType;
 import com.esoxjem.movieguide.listing.sorting.SortingOptionStore;
 import com.esoxjem.movieguide.network.TmdbWebService;
 
+import java.lang.reflect.Method;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -22,6 +26,7 @@ import io.reactivex.Observable;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -48,13 +53,14 @@ public class MoviesListingInteractorImplTest {
     SortingOptionStore mSortingOptionStore;
     @Mock
     Listener mListener;
+    List<String> methodsToMock = Arrays.asList("highestRatedMovies", "newestMovies", "popularMovies");
 
     // endregion helper fields ---------------------------------------------------------------------
 
     MoviesListingInteractorImpl SUT;
 
     @Before
-    public void setUp() throws Exception {
+    public void setUp() {
         initData();
 
         SUT = new MoviesListingInteractorImpl(
@@ -171,34 +177,54 @@ public class MoviesListingInteractorImplTest {
     }
 
     // region helper methods -----------------------------------------------------------------------
-
     private void serviceCallSuccess() {
-        when(mTmdbWebService.highestRatedMovies(anyInt())).thenReturn(MOVIES_WRAPPER_OBSERVABLE);
-        when(mTmdbWebService.newestMovies(anyString(),anyInt())).thenReturn(MOVIES_WRAPPER_OBSERVABLE);
-        when(mTmdbWebService.popularMovies(anyInt())).thenReturn(MOVIES_WRAPPER_OBSERVABLE);
+        mTmdbWebService = mock(TmdbWebService.class, invocationOnMock -> {
+            Method mockedMethod = invocationOnMock.getMethod();
+            if (methodsToMock.contains(mockedMethod.getName())) {
+                return MOVIES_WRAPPER_OBSERVABLE;
+            }
+            return null;
+        });
         when(mFavoritesInteractor.getFavorites()).thenReturn(MOVIE_ARRAY_LIST);
+        SUT = new MoviesListingInteractorImpl(mFavoritesInteractor,
+                mTmdbWebService, mSortingOptionStore);
     }
 
-    private void generalError() {
-        when(mTmdbWebService.highestRatedMovies(anyInt())).thenReturn(ERROR_IN_OBSERVABLE);
-        when(mTmdbWebService.newestMovies(anyString(), anyInt())).thenReturn(ERROR_IN_OBSERVABLE);
-        when(mTmdbWebService.popularMovies(anyInt())).thenReturn(ERROR_IN_OBSERVABLE);
-//        when(mFavoritesInteractor.getFavorites()).thenThrow(new Throwable("error in observable"));
+    private void generalError() throws Exception {
+        mTmdbWebService = mock(TmdbWebService.class, invocationOnMock -> {
+            Method mockedMethod = invocationOnMock.getMethod();
+            if (methodsToMock.contains(mockedMethod.getName())) {
+                return ERROR_IN_OBSERVABLE;
+            }
+            return null;
+        });
+
+        setUp();
     }
 
-    private void networkError() {
-        when(mTmdbWebService.highestRatedMovies(anyInt())).thenThrow(new Throwable("network error"));
-        when(mTmdbWebService.newestMovies(anyString(), anyInt())).thenThrow(new Throwable("network error"));
-        when(mTmdbWebService.popularMovies(anyInt())).thenThrow(new Throwable("network error"));
-        when(mFavoritesInteractor.getFavorites()).thenThrow(new Throwable("network error"));
+    private void networkError() throws Exception {
+        mTmdbWebService = mock(TmdbWebService.class, invocationOnMock -> {
+            Method mockedMethod = invocationOnMock.getMethod();
+            if (methodsToMock.contains(mockedMethod.getName())) {
+                return new UnknownHostException();
+            }
+            return null;
+        });
+        when(mFavoritesInteractor.getFavorites()).thenThrow(new UnknownHostException());
+
+        setUp();
     }
 
-    private void emptyDataError() {
-
-        when(mTmdbWebService.highestRatedMovies(anyInt())).thenReturn(EMPTY_DATA_OBSERVABLE);
-        when(mTmdbWebService.newestMovies(anyString(), anyInt())).thenReturn(EMPTY_DATA_OBSERVABLE);
-        when(mTmdbWebService.popularMovies(anyInt())).thenReturn(EMPTY_DATA_OBSERVABLE);
+    private void emptyDataError() throws Exception{
+        mTmdbWebService = mock(TmdbWebService.class, invocationOnMock -> {
+            Method mockedMethod = invocationOnMock.getMethod();
+            if (methodsToMock.contains(mockedMethod.getName())) {
+                return EMPTY_DATA_OBSERVABLE;
+            }
+            return null;
+        });
         when(mFavoritesInteractor.getFavorites()).thenReturn(new ArrayList());
+        setUp();
     }
 
     private void initData() {
@@ -212,7 +238,9 @@ public class MoviesListingInteractorImplTest {
         emptyMoviesWrapper.setMovieList(new ArrayList<>());
         EMPTY_DATA_OBSERVABLE = Observable.fromArray(emptyMoviesWrapper);
     }
+
     // endregion helper methods --------------------------------------------------------------------
+
     // region helper class -------------------------------------------------------------------------
 
     // endregion helper class ----------------------------------------------------------------------
