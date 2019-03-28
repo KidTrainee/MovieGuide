@@ -22,6 +22,8 @@ public interface MoviesListingInteractor
         void onMovieSearchSuccess(List<Movie> movies);
 
         void onMovieSearchFailed(Throwable e);
+
+        void onNetworkError();
     }
 
     boolean isPaginationSupported();

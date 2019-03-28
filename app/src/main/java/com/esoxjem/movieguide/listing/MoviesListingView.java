@@ -26,6 +26,8 @@ interface MoviesListingView extends ObservableView<MoviesListingView.Listener>
         void onSaveInstanceState(Bundle outState);
 
         void onLoadMore();
+
+        void onRetry();
     }
 
     void searchViewClicked(String searchText);
@@ -36,4 +38,5 @@ interface MoviesListingView extends ObservableView<MoviesListingView.Listener>
     void loadingFinished();
     void loadingFailed(String errorMessage);
     void onMovieClicked(Movie movie);
+    void showNetworkError();
 }

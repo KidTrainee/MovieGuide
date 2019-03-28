@@ -157,6 +157,17 @@ public class MoviesListingFragment
     }
 
     @Override
+    public void showNetworkError() {
+        mLoadMoreOnScrollListener.setIsLoading(false);
+        Snackbar.make(moviesListingRC, "Unable to connect", Snackbar.LENGTH_INDEFINITE)
+                .setAction("RETRY", view -> {
+                    for (Listener listener : getListeners()) {
+                        listener.onRetry();
+                    }
+                }).show();
+    }
+
+    @Override
     public void onMovieClicked(Movie movie) {
         callback.onMovieClicked(movie);
     }

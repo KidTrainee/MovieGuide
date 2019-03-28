@@ -136,6 +136,13 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     }
 
     @Override
+    public void onNetworkError() {
+        if (isViewAttached()) {
+            mView.showNetworkError();
+        }
+    }
+
+    @Override
     public void onMovieSearchSuccess(List<Movie> movies) {
         if (isViewAttached()) {
             mMovies.clear();
@@ -151,6 +158,7 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
             mView.loadingFailed(e.getMessage());
         }
     }
+
     // endregion
 
     // region ViewListener methods
@@ -195,6 +203,11 @@ class MoviesListingPresenterImpl implements MoviesListingPresenter {
     @Override
     public void onLoadMore() {
         fetchNextPage();
+    }
+
+    @Override
+    public void onRetry() {
+        fetchMoviesCurrentPage();
     }
 
     public int getCurrentPage() {

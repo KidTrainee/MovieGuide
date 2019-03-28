@@ -14,6 +14,7 @@ import com.esoxjem.movieguide.util.rx.ExceptionTracer;
 import com.esoxjem.movieguide.util.rx.RxUtils;
 import com.esoxjem.movieguide.util.schedulers.BaseSchedulerProvider;
 
+import java.net.UnknownHostException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -84,7 +85,13 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     public void searchMovie(String searchText, Listener listener) {
         movieSearchSubscription = searchMovie(searchText).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(listener::onMovieSearchSuccess, listener::onMovieSearchFailed);
+                .subscribe(listener::onMovieFetchSuccess, throwable -> {
+                    if (throwable instanceof UnknownHostException) {
+                        listener.onNetworkError();
+                    } else {
+                        listener.onMovieFetchFailed(throwable);
+                    }
+                });
     }
 
     @Override
@@ -98,6 +105,12 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
                         EspressoIdlingResource.decrement(); // Set app as idle.
                     }
                 })
-                .subscribe(listener::onMovieFetchSuccess, listener::onMovieFetchFailed);
+                .subscribe(listener::onMovieFetchSuccess, throwable -> {
+                    if (throwable instanceof UnknownHostException) {
+                        listener.onNetworkError();
+                    } else {
+                        listener.onMovieFetchFailed(throwable);
+                    }
+                });
     }
 }
