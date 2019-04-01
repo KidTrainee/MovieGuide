@@ -17,6 +17,8 @@ import com.esoxjem.movieguide.common.BaseActivity;
 import com.esoxjem.movieguide.details.MovieDetailsActivity;
 import com.esoxjem.movieguide.details.MovieDetailsFragment;
 import com.esoxjem.movieguide.Movie;
+import com.esoxjem.movieguide.details.MovieDetailsPresenter;
+import com.esoxjem.movieguide.details.MovieDetailsView;
 import com.esoxjem.movieguide.util.rx.RxUtils;
 import com.esoxjem.movieguide.util.EspressoIdlingResource;
 import com.jakewharton.rxbinding2.support.v7.widget.RxSearchView;
@@ -29,6 +31,8 @@ public class MoviesListingActivity extends BaseActivity implements MoviesListing
     private boolean twoPaneMode;
     private Disposable searchViewTextSubscription;
 
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,18 +40,25 @@ public class MoviesListingActivity extends BaseActivity implements MoviesListing
         setToolbar();
 
         if (savedInstanceState==null) {
+            MoviesListingFragment moviesListingFragment = new MoviesListingFragment();
             getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.fragment_listing_container, new MoviesListingFragment())
+                    .replace(R.id.fragment_listing_container, moviesListingFragment)
                     .commit();
+            MoviesListingPresenter moviesPresenter = getListingModule().getMoviesListingPresenter();
+            moviesPresenter.setView(moviesListingFragment);
         }
 
         if (findViewById(R.id.movie_details_container) != null) {
             twoPaneMode = true;
 
             if (savedInstanceState == null) {
+                MovieDetailsFragment view = new MovieDetailsFragment();
                 getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.movie_details_container, new MovieDetailsFragment())
+                        .replace(R.id.movie_details_container, view)
                         .commit();
+
+                MovieDetailsPresenter movieDetailsPresenter = getDetailsModule().getMovieDetailsPresenter();
+                movieDetailsPresenter.setView(view);
             }
         } else {
             twoPaneMode = false;

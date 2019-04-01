@@ -1,6 +1,7 @@
 package com.esoxjem.movieguide.listing;
 
 import com.esoxjem.movieguide.Movie;
+import com.esoxjem.movieguide.listing.sorting.SortingDialogView;
 
 import java.util.List;
 
@@ -22,8 +23,4 @@ public interface MoviesListingPresenter
     void searchMovie(String searchText);
 
     void searchMovieBackPressed();
-
-    List<Movie> getCurrentData();
-
-    Movie getFirstMovie();
 }

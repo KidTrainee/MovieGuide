@@ -11,7 +11,9 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 
 import com.esoxjem.movieguide.R;
-import com.esoxjem.movieguide.listing.MoviesListingPresenter;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -20,8 +22,12 @@ import butterknife.Unbinder;
 /**
  * @author arun
  */
-public class SortingDialogFragment extends BaseSortingDialogFragment implements SortingDialogView, RadioGroup.OnCheckedChangeListener
+public class SortingDialogFragment extends BaseSortingDialogFragment
+        implements SortingDialogView, RadioGroup.OnCheckedChangeListener
 {
+
+    Set<Listener> mListeners = new HashSet<>();
+
     SortingDialogPresenter sortingDialogPresenter;
 
     @BindView(R.id.most_popular)
@@ -35,14 +41,8 @@ public class SortingDialogFragment extends BaseSortingDialogFragment implements 
     @BindView(R.id.sorting_group)
     RadioGroup sortingOptionsGroup;
 
-    private static MoviesListingPresenter moviesListingPresenter;
-    private Unbinder unbinder;
 
-    public static SortingDialogFragment newInstance(MoviesListingPresenter moviesListingPresenter)
-    {
-        SortingDialogFragment.moviesListingPresenter = moviesListingPresenter;
-        return new SortingDialogFragment();
-    }
+    private Unbinder unbinder;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState)
@@ -108,22 +108,18 @@ public class SortingDialogFragment extends BaseSortingDialogFragment implements 
         {
             case R.id.most_popular:
                 sortingDialogPresenter.onPopularMoviesSelected();
-                moviesListingPresenter.fetchFirstPage();
                 break;
-
             case R.id.highest_rated:
                 sortingDialogPresenter.onHighestRatedMoviesSelected();
-                moviesListingPresenter.fetchFirstPage();
                 break;
-
             case R.id.favorites:
                 sortingDialogPresenter.onFavoritesSelected();
-                moviesListingPresenter.fetchFirstPage();
-                break;
             case R.id.newest:
                 sortingDialogPresenter.onNewestMoviesSelected();
-                moviesListingPresenter.fetchFirstPage();
                 break;
+        }
+        for (Listener listener : getListeners()) {
+            listener.onActionSortSelected();
         }
     }
 
@@ -139,5 +135,19 @@ public class SortingDialogFragment extends BaseSortingDialogFragment implements 
         super.onDestroyView();
         sortingDialogPresenter.destroy();
         unbinder.unbind();
+    }
+
+    @Override
+    public void registerListener(Listener listener) {
+        mListeners.add(listener);
+    }
+
+    @Override
+    public void unregisterListener(Listener listener) {
+        mListeners.remove(listener);
+    }
+
+    public Set<Listener> getListeners() {
+        return mListeners;
     }
 }

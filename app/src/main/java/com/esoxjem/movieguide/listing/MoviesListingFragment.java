@@ -4,9 +4,7 @@ package com.esoxjem.movieguide.listing;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.design.widget.Snackbar;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,12 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.esoxjem.movieguide.Constants;
 import com.esoxjem.movieguide.Movie;
 import com.esoxjem.movieguide.R;
 import com.esoxjem.movieguide.listing.sorting.SortingDialogFragment;
+import com.esoxjem.movieguide.listing.sorting.SortingDialogView;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -29,9 +26,7 @@ import butterknife.Unbinder;
 
 public class MoviesListingFragment
         extends BaseMoviesListingFragment<MoviesListingView.Listener>
-        implements MoviesListingView {
-
-    MoviesListingPresenter moviesPresenter;
+        implements MoviesListingView, SortingDialogView.Listener {
 
     @BindView(R.id.movies_listing)
     RecyclerView moviesListingRC;
@@ -60,7 +55,6 @@ public class MoviesListingFragment
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
         setRetainInstance(true);
-        moviesPresenter = getModule().getMoviesListingPresenter();
     }
 
     private LoadMoreOnScrollListener mLoadMoreOnScrollListener;
@@ -87,7 +81,6 @@ public class MoviesListingFragment
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        moviesPresenter.setView(this);
         for (Listener listener : getListeners()) {
             listener.onViewCreated(savedInstanceState);
         }
@@ -97,9 +90,6 @@ public class MoviesListingFragment
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_sort:
-                for (Listener listener : getListeners()) {
-                    listener.onActionSortSelected();
-                }
                 displaySortingOptions();
         }
 
@@ -107,7 +97,8 @@ public class MoviesListingFragment
     }
 
     private void displaySortingOptions() {
-        DialogFragment sortingDialogFragment = SortingDialogFragment.newInstance(moviesPresenter);
+        SortingDialogFragment sortingDialogFragment = new SortingDialogFragment();
+        sortingDialogFragment.registerListener(this);
         sortingDialogFragment.show(getFragmentManager(), "Select Quantity");
     }
 
@@ -123,8 +114,11 @@ public class MoviesListingFragment
         RecyclerView.LayoutManager layoutManager = new GridLayoutManager(getActivity(), columns);
 
         moviesListingRC.setLayoutManager(layoutManager);
-        adapter = new MoviesListingAdapter(moviesPresenter.getCurrentData(), this);
-        moviesListingRC.setAdapter(adapter);
+        for (Listener listener : getListeners()) {
+            List<Movie> movies = listener.getCurrentData();
+            adapter = new MoviesListingAdapter(movies, this);
+            moviesListingRC.setAdapter(adapter);
+        }
     }
 
     @Override
@@ -136,7 +130,10 @@ public class MoviesListingFragment
 
     @Override
     public void showFirstMovie() {
-        callback.onMoviesLoaded(moviesPresenter.getFirstMovie());
+        for (Listener listener : getListeners()) {
+            Movie movie = listener.getFirstMovie();
+            callback.onMoviesLoaded(movie);
+        }
     }
 
     @Override
@@ -206,6 +203,13 @@ public class MoviesListingFragment
     public void searchViewBackButtonClicked() {
         for (Listener listener : getListeners()) {
             listener.searchViewBackButtonClicked();
+        }
+    }
+
+    @Override
+    public void onActionSortSelected() {
+        for (Listener listener : getListeners()) {
+            listener.onActionSortSelected();
         }
     }
 
