@@ -82,7 +82,6 @@ public class SortingDialogFragment extends BaseSortingDialogFragment
         mostPopular.setChecked(true);
     }
 
-
     @Override
     public void setNewestChecked()
     {

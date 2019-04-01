@@ -83,8 +83,14 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
 
     @Override
     public void searchMovie(String searchText, Listener listener) {
+        EspressoIdlingResource.increment();
         movieSearchSubscription = searchMovie(searchText).subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
+                .doFinally(() -> {
+                    if (!EspressoIdlingResource.getIdlingResource().isIdleNow()) {
+                        EspressoIdlingResource.decrement();
+                    }
+                })
                 .subscribe(listener::onMovieFetchSuccess, throwable -> {
                     if (throwable instanceof UnknownHostException) {
                         listener.onNetworkError();
