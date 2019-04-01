@@ -133,6 +133,9 @@ public class SortingDialogFragment extends BaseSortingDialogFragment
     public void onDestroyView()
     {
         super.onDestroyView();
+        for (Listener listener : getListeners()) {
+            unregisterListener(listener);
+        }
         sortingDialogPresenter.destroy();
         unbinder.unbind();
     }
