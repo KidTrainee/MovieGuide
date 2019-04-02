@@ -7,9 +7,9 @@ import android.support.test.espresso.contrib.RecyclerViewActions;
 import android.support.test.rule.ActivityTestRule;
 import android.support.test.runner.AndroidJUnit4;
 
+import com.esoxjem.movieguide.BaseApplication;
 import com.esoxjem.movieguide.R;
-
-import java.util.Set;
+import com.esoxjem.movieguide.common.mocks.AppModuleMock;
 
 import org.junit.After;
 import org.junit.Before;
@@ -24,7 +24,7 @@ import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.esoxjem.movieguide.common.EspRecyclerView.matchCount;
+import static com.esoxjem.movieguide.common.assertions.EspRecyclerView.matchCount;
 import static com.esoxjem.movieguide.listing.MoviesListingInteractorImpl.NUMBER_OF_ITEM_PER_QUERY;
 import static org.hamcrest.core.AllOf.allOf;
 
@@ -33,26 +33,19 @@ public class MoviesListingFragmentTest {
 
     // region constants ----------------------------------------------------------------------------
     @Rule
-    public final ActivityTestRule<MoviesListingActivity> activityTestRule = new ActivityTestRule<>(MoviesListingActivity.class);
+    public ActivityTestRule<MoviesListingActivity> activityTestRule = new ActivityTestRule<>(MoviesListingActivity.class);
 
     private IdlingResource idlingResource;
-    Set<MoviesListingView.Listener> mListeners;
     // endregion constants -------------------------------------------------------------------------
     // region helper fields ------------------------------------------------------------------------
 
     // endregion helper fields ---------------------------------------------------------------------
-
-    MoviesListingFragment SUT;
 
     @Before
     public void setUp() throws Exception {
         // register IdlingResource
         idlingResource = activityTestRule.getActivity().getCountingIdlingResource();
         Espresso.registerIdlingResources(idlingResource);
-        SUT = (MoviesListingFragment) activityTestRule.getActivity()
-                .getSupportFragmentManager()
-                .findFragmentById(R.id.fragment_listing_container);
-        mListeners = SUT.getListeners();
     }
 
     @Test
@@ -131,6 +124,15 @@ public class MoviesListingFragmentTest {
         onView(withId(R.id.movies_listing)).check(matchCount(NUMBER_OF_ITEM_PER_QUERY));
     }
 
+    @Test
+    public void showMovies_emptyList_showSnackbar_noDataMessage() throws Exception {
+        // Arrange
+        emptyDataWebService();
+        // Act
+        // Assert
+        onView(withId(android.support.design.R.id.snackbar_text)).check(matches(isDisplayed()));
+    }
+
     @After
     public void unregisterIdlingResource() {
         if (idlingResource != null) {
@@ -143,18 +145,14 @@ public class MoviesListingFragmentTest {
     //* able to show search icon
     //* searchIconClicked - searchView expanded, keyboard displayed
     //- searchIconClicked - onActionSortSelected dispatched to presenter
-
     //* able to show movie list
-
     //* able to scroll on list
-
     //* searchViewClicked - dispatch event searchViewClicked
     //- searchViewClicked - correct data send to presenter
     //* searchViewClicked - snackbar displayed
-
     //* showMovies - success - correct number of items created
-    //- showMovies - empty list show no data info
-    //- showMovies - snackbar not displayed
+    //* showMovies - empty list show no data info
+    // showMovies - snackbar not displayed
 
     //* showFirstMovie - correct movie displayed
     // loadingStarted - loading indicator displayed
@@ -168,6 +166,12 @@ public class MoviesListingFragmentTest {
     // endregion
 
     // region helper methods -----------------------------------------------------------------------
+    private void emptyDataWebService() {
+        BaseApplication app = (BaseApplication) activityTestRule.getActivity().getApplication();
+        AppModuleMock appModuleMock = new AppModuleMock(app);
+        app.setAppModule(appModuleMock);
+//        activityTestRule.launchActivity(new Intent());
+    }
 
     // endregion helper methods --------------------------------------------------------------------
     // region helper class -------------------------------------------------------------------------

@@ -1,10 +1,13 @@
 package com.esoxjem.movieguide.network;
 
 
+import android.support.annotation.VisibleForTesting;
+
 import com.esoxjem.movieguide.BuildConfig;
 
 import java.util.concurrent.TimeUnit;
 
+import butterknife.internal.ListenerClass;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -23,7 +26,8 @@ public class NetworkModule {
     public NetworkModule() {
     }
 
-    OkHttpClient getOkHttpClient() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public OkHttpClient getOkHttpClient() {
         OkHttpClient.Builder builder = new OkHttpClient.Builder();
         builder.connectTimeout(CONNECT_TIMEOUT_IN_MS, TimeUnit.MILLISECONDS)
                 .addInterceptor(getRequestInterceptor());
@@ -41,7 +45,8 @@ public class NetworkModule {
         return new RequestInterceptor();
     }
 
-    Retrofit getRetrofit() {
+    @VisibleForTesting(otherwise = VisibleForTesting.NONE)
+    public Retrofit getRetrofit() {
         return new Retrofit
                 .Builder()
                 .baseUrl(BuildConfig.TMDB_BASE_URL)

@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.support.annotation.VisibleForTesting;
 
 import com.esoxjem.movieguide.favorites.FavoritesInteractor;
 import com.esoxjem.movieguide.favorites.FavoritesModule;
@@ -27,7 +28,8 @@ public class AppModule
 {
     private Context context;
 
-    AppModule(Application application)
+    @VisibleForTesting(otherwise = VisibleForTesting.PACKAGE_PRIVATE)
+    public AppModule(Application application)
     {
         context = application;
     }
@@ -46,7 +48,8 @@ public class AppModule
         return getNetworkModule().getTmdbWebService();
     }
 
-    private NetworkModule getNetworkModule() {
+    @VisibleForTesting(otherwise = VisibleForTesting.PRIVATE)
+    public NetworkModule getNetworkModule() {
         return new NetworkModule();
     }
 

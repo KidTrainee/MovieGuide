@@ -1,6 +1,7 @@
 package com.esoxjem.movieguide.listing;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.VisibleForTesting;
 import android.util.Log;
 
 import com.esoxjem.movieguide.Movie;
@@ -119,5 +120,10 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
                         listener.onMovieFetchFailed(throwable);
                     }
                 });
+    }
+
+    @VisibleForTesting
+    public void setTmdbWebService(TmdbWebService tmdbWebService) {
+        this.tmdbWebService = tmdbWebService;
     }
 }

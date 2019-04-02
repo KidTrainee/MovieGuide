@@ -1,6 +1,4 @@
-package com.esoxjem.movieguide.common;
-
-import com.esoxjem.movieguide.common.assertions.RecyclerViewItemCountAssertion;
+package com.esoxjem.movieguide.common.assertions;
 
 public class EspRecyclerView {
     public static RecyclerViewItemCountAssertion matchCount(int count) {
