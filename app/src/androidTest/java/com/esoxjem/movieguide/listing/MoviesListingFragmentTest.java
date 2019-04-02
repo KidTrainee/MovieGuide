@@ -1,6 +1,5 @@
 package com.esoxjem.movieguide.listing;
 
-import android.support.design.widget.Snackbar;
 import android.support.test.espresso.Espresso;
 import android.support.test.espresso.IdlingResource;
 import android.support.test.espresso.action.ViewActions;
@@ -11,7 +10,6 @@ import android.support.test.runner.AndroidJUnit4;
 import com.esoxjem.movieguide.R;
 
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 import org.junit.After;
 import org.junit.Before;
@@ -22,12 +20,12 @@ import org.junit.runner.RunWith;
 import static android.support.test.espresso.Espresso.onView;
 import static android.support.test.espresso.action.ViewActions.click;
 import static android.support.test.espresso.action.ViewActions.pressImeActionButton;
-import static android.support.test.espresso.action.ViewActions.swipeDown;
 import static android.support.test.espresso.assertion.ViewAssertions.matches;
 import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 import static android.support.test.espresso.matcher.ViewMatchers.withText;
-import static com.esoxjem.movieguide.TestHelpers.waitId;
+import static com.esoxjem.movieguide.common.EspRecyclerView.matchCount;
+import static com.esoxjem.movieguide.listing.MoviesListingInteractorImpl.NUMBER_OF_ITEM_PER_QUERY;
 import static org.hamcrest.core.AllOf.allOf;
 
 @RunWith(AndroidJUnit4.class)
@@ -129,8 +127,8 @@ public class MoviesListingFragmentTest {
     public void showMovies_success_correctNumberOfItemsCreated() throws Exception {
         // Arrange
         // Act
-//        onView(withId(R.id.movies_listing)).check();
         // Assert
+        onView(withId(R.id.movies_listing)).check(matchCount(NUMBER_OF_ITEM_PER_QUERY));
     }
 
     @After
@@ -147,17 +145,18 @@ public class MoviesListingFragmentTest {
     //- searchIconClicked - onActionSortSelected dispatched to presenter
 
     //* able to show movie list
+
     //* able to scroll on list
 
     //* searchViewClicked - dispatch event searchViewClicked
     //- searchViewClicked - correct data send to presenter
     //* searchViewClicked - snackbar displayed
 
-    // showMovies - success - correct number of items created
-    // showMovies - empty list show no data info
-    // showMovies - snackbar not displayed
+    //* showMovies - success - correct number of items created
+    //- showMovies - empty list show no data info
+    //- showMovies - snackbar not displayed
 
-    // showFirstMovie - correct movie displayed
+    //* showFirstMovie - correct movie displayed
     // loadingStarted - loading indicator displayed
     // loadingFinished - loading indicator not display
     // loadingFailed - correct error message display

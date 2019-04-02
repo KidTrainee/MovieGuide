@@ -38,6 +38,7 @@ class MoviesListingInteractorImpl implements MoviesListingInteractor {
     private SortingOptionStore sortingOptionStore;
     private DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     private static final int NEWEST_MIN_VOTE_COUNT = 50;
+    public static final int NUMBER_OF_ITEM_PER_QUERY = 20;
 
     private Disposable movieSearchSubscription;
     private Disposable fetchSubscription;
